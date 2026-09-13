@@ -1,0 +1,131 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Dados do perfil do paciente e informações clínicas de base.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 120 },
+        "email": { "type": "string", "maxLength": 254 },
+        "birthDate": { "type": "string", "maxLength": 30 },
+        "createdAt": { "type": "string", "maxLength": 40 },
+        "updatedAt": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["uid", "name", "email", "createdAt"]
+    },
+    "PainLog": {
+      "title": "PainLog",
+      "description": "Registro de intensidade da dor, localização corporal, tipo e gatilhos.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string", "maxLength": 40 },
+        "painLevel": { "type": "number" },
+        "severityCategory": { "type": "string", "enum": ["mild", "moderate", "severe", "intense"] },
+        "painType": { "type": "string", "maxLength": 50 },
+        "bodyLocations": { "type": "array" },
+        "triggers": { "type": "array" },
+        "reliefActions": { "type": "array" },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "isFlareUp": { "type": "boolean" }
+      },
+      "required": ["id", "userId", "timestamp", "painLevel", "severityCategory"]
+    },
+    "Medication": {
+      "title": "Medication",
+      "description": "Prescrição e cadastro de medicamentos com posologia e horários.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 120 },
+        "dosage": { "type": "string", "maxLength": 60 },
+        "category": { "type": "string", "maxLength": 50 },
+        "scheduledTimes": { "type": "array" },
+        "instructions": { "type": "string", "maxLength": 300 },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["id", "userId", "name", "dosage", "scheduledTimes", "isActive"]
+    },
+    "MedicationIntake": {
+      "title": "MedicationIntake",
+      "description": "Registro de tomada diária ou adesão medicamentosa.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "medicationId": { "type": "string", "maxLength": 128 },
+        "medicationName": { "type": "string", "maxLength": 120 },
+        "dosage": { "type": "string", "maxLength": 60 },
+        "scheduledTime": { "type": "string", "maxLength": 10 },
+        "takenAt": { "type": "string", "maxLength": 40 },
+        "status": { "type": "string", "enum": ["taken", "skipped", "pending"] },
+        "date": { "type": "string", "maxLength": 15 }
+      },
+      "required": ["id", "userId", "medicationId", "scheduledTime", "status", "date"]
+    },
+    "SleepLog": {
+      "title": "SleepLog",
+      "description": "Registro de qualidade e duração do sono do paciente.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 15 },
+        "durationHours": { "type": "number" },
+        "durationMinutes": { "type": "number" },
+        "qualityRating": { "type": "number" },
+        "wakeUpsCount": { "type": "number" },
+        "sleepTime": { "type": "string", "maxLength": 10 },
+        "wakeTime": { "type": "string", "maxLength": 10 },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["id", "userId", "date", "durationHours", "qualityRating"]
+    },
+    "ExerciseLog": {
+      "title": "ExerciseLog",
+      "description": "Registro de fisioterapia, exercícios ou atividades com impacto na dor.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 15 },
+        "activityType": { "type": "string", "maxLength": 60 },
+        "durationMinutes": { "type": "number" },
+        "intensity": { "type": "string", "enum": ["leve", "moderada", "intensa"] },
+        "painImpact": { "type": "string", "enum": ["aliviou", "neutro", "aumentou_dor"] },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["id", "userId", "date", "activityType", "durationMinutes", "intensity", "painImpact"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Documento de perfil e preferências do usuário"
+    },
+    "/users/{userId}/pain_logs/{logId}": {
+      "schema": "PainLog",
+      "description": "Coleção de registros cronológicos de dor e crises"
+    },
+    "/users/{userId}/medications/{medicationId}": {
+      "schema": "Medication",
+      "description": "Medicamentos prescritos e posologia"
+    },
+    "/users/{userId}/medication_intakes/{intakeId}": {
+      "schema": "MedicationIntake",
+      "description": "Registro diário de ingestão de medicamentos"
+    },
+    "/users/{userId}/sleep_logs/{sleepId}": {
+      "schema": "SleepLog",
+      "description": "Registros de sono e descanso diário"
+    },
+    "/users/{userId}/exercise_logs/{exerciseId}": {
+      "schema": "ExerciseLog",
+      "description": "Registros de exercícios e impacto nas dores"
+    }
+  }
+}

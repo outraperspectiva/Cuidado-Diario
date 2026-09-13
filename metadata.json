@@ -1,0 +1,8 @@
+{
+  "name": "Cuidado Diário",
+  "description": "Aplicativo de acompanhamento de dor, medicamentos, sono e evolução de saúde.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

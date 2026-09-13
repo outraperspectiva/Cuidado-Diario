@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Background subtle gradient matching original artwork -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="65%" fx="45%" fy="40%">
+      <stop offset="0%" stop-color="#F2F7FB" />
+      <stop offset="60%" stop-color="#E5EFF7" />
+      <stop offset="100%" stop-color="#D9E7F2" />
+    </radialGradient>
+
+    <!-- Soft 3D ambient shadow filter -->
+    <filter id="soft3DShadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="1" dy="4" stdDeviation="4.5" flood-color="#1B476D" flood-opacity="0.18" />
+    </filter>
+
+    <filter id="waveShadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="1.5" dy="4" stdDeviation="3.5" flood-color="#123B5E" flood-opacity="0.22" />
+    </filter>
+
+    <!-- Vertebrae Block Gradients -->
+    <linearGradient id="vertGradTop" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#84C6EF" />
+      <stop offset="35%" stop-color="#55A4DB" />
+      <stop offset="100%" stop-color="#3B87C2" />
+    </linearGradient>
+
+    <linearGradient id="vertGradBottom" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#76BCE9" />
+      <stop offset="40%" stop-color="#4B9CD7" />
+      <stop offset="100%" stop-color="#337EBC" />
+    </linearGradient>
+
+    <!-- Vertebral Curved Arches (Smooth ribbons) -->
+    <linearGradient id="archGradUpper" x1="30%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%" stop-color="#D6EDFB" />
+      <stop offset="40%" stop-color="#A8D6F4" />
+      <stop offset="100%" stop-color="#8AC1E8" />
+    </linearGradient>
+
+    <linearGradient id="archGradLower" x1="30%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%" stop-color="#B2DCF6" />
+      <stop offset="60%" stop-color="#93C8ED" />
+      <stop offset="100%" stop-color="#75B3DE" />
+    </linearGradient>
+
+    <!-- Horizontal Pulse Wave Gradient -->
+    <linearGradient id="pulseWaveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#459AD8" />
+      <stop offset="30%" stop-color="#4FA3DE" />
+      <stop offset="65%" stop-color="#7CBFEA" />
+      <stop offset="100%" stop-color="#A5D5F3" />
+    </linearGradient>
+
+    <!-- Highlight stroke gradient for 3D tubular wave -->
+    <linearGradient id="waveHighlightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.55" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.4" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base container background -->
+  <rect width="200" height="200" rx="44" fill="url(#bgGrad)" />
+
+  <!-- MAIN EMBLEM GROUP WITH 3D SHADOW -->
+  <g filter="url(#soft3DShadow)">
+    
+    <!-- 1. UPPER VERTEBRAL ARCH (Ribbon on the right) -->
+    <path
+      d="M 98 94 C 95 72, 97 54, 111 41 C 109 43, 103 54, 101 70 C 99 82, 101 92, 106 97 Z"
+      fill="url(#archGradUpper)"
+    />
+
+    <!-- 2. UPPER VERTEBRAE BLOCKS (Curving on the left) -->
+    <!-- Vertebra 1 (topmost) -->
+    <g transform="translate(93, 44) rotate(-14)">
+      <rect x="-8" y="-4.5" width="16" height="9" rx="3.5" fill="url(#vertGradTop)" />
+      <path d="M -8 -1.5 C -10 -1.5, -10.5 1.5, -8 1.5 Z" fill="#4B9CD7" />
+    </g>
+
+    <!-- Vertebra 2 -->
+    <g transform="translate(85.5, 57) rotate(-7)">
+      <rect x="-9.5" y="-5" width="19" height="10" rx="3.5" fill="url(#vertGradTop)" />
+      <path d="M -9.5 -2 C -12 -2, -12.5 2, -9.5 2 Z" fill="#4697D3" />
+    </g>
+
+    <!-- Vertebra 3 -->
+    <g transform="translate(81.5, 71) rotate(0)">
+      <rect x="-10.5" y="-5" width="21" height="10" rx="3.8" fill="url(#vertGradTop)" />
+      <path d="M -10.5 -2 C -13.5 -2, -13.5 2, -10.5 2 Z" fill="#3F91CE" />
+    </g>
+
+    <!-- Vertebra 4 -->
+    <g transform="translate(81.5, 85) rotate(5)">
+      <rect x="-11" y="-5.2" width="22" height="10.4" rx="4" fill="url(#vertGradTop)" />
+      <path d="M -11 -2 C -14 -2, -14 2, -11 2 Z" fill="#3A8BC9" />
+    </g>
+
+    <!-- Vertebra 5 -->
+    <g transform="translate(85.5, 99) rotate(12)">
+      <rect x="-10.5" y="-5" width="21" height="10" rx="3.8" fill="url(#vertGradTop)" />
+      <path d="M -10.5 -2 C -13 -2, -13 2, -10.5 2 Z" fill="#3584C3" />
+    </g>
+
+    <!-- 3. LOWER VERTEBRAL ARCH (Ribbon on the right) -->
+    <path
+      d="M 107 101 C 113 115, 117 132, 105 161 C 107 155, 113 138, 111 123 C 109 113, 105 106, 99 101 Z"
+      fill="url(#archGradLower)"
+    />
+
+    <!-- 4. LOWER VERTEBRAE BLOCKS (Curving downwards) -->
+    <!-- Vertebra 6 -->
+    <g transform="translate(97, 118) rotate(14)">
+      <rect x="-10" y="-5" width="20" height="10" rx="3.8" fill="url(#vertGradBottom)" />
+      <path d="M -10 -2 C -12.5 -2, -12.5 2, -10 2 Z" fill="#3683C0" />
+    </g>
+
+    <!-- Vertebra 7 -->
+    <g transform="translate(98.5, 133) rotate(6)">
+      <rect x="-10.5" y="-5" width="21" height="10" rx="3.8" fill="url(#vertGradBottom)" />
+      <path d="M -10.5 -2 C -13 -2, -13 2, -10.5 2 Z" fill="#337EBC" />
+    </g>
+
+    <!-- Vertebra 8 -->
+    <g transform="translate(96.5, 147) rotate(-3)">
+      <rect x="-10" y="-4.8" width="20" height="9.6" rx="3.6" fill="url(#vertGradBottom)" />
+      <path d="M -10 -2 C -12.5 -2, -12.5 2, -10 2 Z" fill="#3179B6" />
+    </g>
+
+    <!-- Vertebra 9 (bottommost) -->
+    <g transform="translate(91.5, 160) rotate(-12)">
+      <rect x="-8.5" y="-4.5" width="17" height="9" rx="3.4" fill="url(#vertGradBottom)" />
+      <path d="M -8.5 -1.5 C -10.5 -1.5, -10.5 1.5, -8.5 1.5 Z" fill="#2E73B0" />
+    </g>
+
+  </g>
+
+  <!-- 5. HORIZONTAL 3D PULSE WAVE (Intertwined smoothly in front) -->
+  <g filter="url(#waveShadow)">
+    <!-- Base Wave Tube (Depth layer) -->
+    <path
+      d="M 44 103 L 64 103 C 71 103, 76 112, 82 121 C 85 125, 91 125, 95 119 L 102 107 C 107 98, 114 86, 124 86 C 133 86, 137 94, 143 103 L 156 103"
+      fill="none"
+      stroke="url(#pulseWaveGrad)"
+      stroke-width="12.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Inner 3D Highlight Stroke (Tubular sheen) -->
+    <path
+      d="M 45 101.5 L 64 101.5 C 71 101.5, 75 110, 81 119 C 84 123, 89 123, 93 117 L 100 105 C 105 96, 112 84.5, 124 84.5 C 132 84.5, 136 92.5, 142 101.5 L 155 101.5"
+      fill="none"
+      stroke="url(#waveHighlightGrad)"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>
