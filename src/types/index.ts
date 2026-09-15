@@ -62,6 +62,11 @@ export interface Medication {
   isActive: boolean;
   prescribedBy?: string;
   createdAt: string;
+  isChronic?: boolean; // true = contínuo, false = uso não crônico / temporário
+  dosesPerDay?: number; // número de doses diárias (ex: 1, 2, 3)
+  durationDays?: number; // período de utilização em dias (ex: 5, 7, 10, 14)
+  startDate?: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
 }
 
 export interface MedicationIntake {
@@ -74,6 +79,37 @@ export interface MedicationIntake {
   takenAt?: string;
   status: 'taken' | 'skipped' | 'pending';
   date: string; // YYYY-MM-DD
+}
+
+export interface PhysiotherapyPrescription {
+  id: string;
+  userId: string;
+  title: string;
+  isChronic?: boolean;
+  timesPerDay: number; // número de execuções diárias
+  durationDays: number; // período de dias indicado
+  scheduledTimes: string[]; // ex: ["09:00", "16:00"]
+  instructions?: string;
+  prescribedBy?: string;
+  isActive: boolean;
+  startDate: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
+  createdAt: string;
+  physiotherapyDetails?: Partial<PhysiotherapyDetails>;
+}
+
+export interface PhysiotherapyExecution {
+  id: string;
+  userId: string;
+  prescriptionId: string;
+  prescriptionTitle: string;
+  scheduledTime: string;
+  sessionNumber: number; // 1ª, 2ª do dia
+  totalSessions: number; // total do dia
+  status: 'pending' | 'completed';
+  completedAt?: string;
+  date: string; // YYYY-MM-DD
+  exerciseLogId?: string;
 }
 
 export interface SleepLog {
@@ -145,6 +181,29 @@ export interface ClinicalEvolutionSummary {
   avgSleepHours: number;
   exerciseMinutesTotal: number;
   medicationAdherencePercent: number;
+  physioAdherencePercent: number;
   topTriggers: { trigger: string; count: number }[];
   mostAffectedAreas: { bodyPart: BodyPart; count: number }[];
+}
+
+export interface DailyPhysioAdherence {
+  date: string; // YYYY-MM-DD
+  dayLabel: string; // e.g. "Seg", "Ter", "Hoje"
+  shortDate: string; // e.g. "14/09"
+  plannedCount: number;
+  completedCount: number;
+  percentage: number; // 0 to 100
+  exerciseMinutes: number;
+  status: 'completo' | 'parcial' | 'nao_realizado' | 'sem_prescricao';
+}
+
+export interface PhysioPeriodSummary {
+  periodDays: number;
+  dailyData: DailyPhysioAdherence[];
+  overallPercentage: number;
+  totalPlanned: number;
+  totalCompleted: number;
+  daysWithFullAdherence: number;
+  totalExerciseMinutes: number;
+  adherenceRating: 'excelente' | 'boa' | 'moderada' | 'baixa';
 }

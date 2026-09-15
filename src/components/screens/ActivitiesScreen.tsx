@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { addSleepLog, deleteSleepLog } from '../../store/slices/sleepSlice';
-import { addExerciseLog, deleteExerciseLog } from '../../store/slices/exerciseSlice';
+import {
+  addExerciseLog,
+  deleteExerciseLog,
+  addPhysioPrescription,
+  deletePhysioPrescription,
+  togglePhysioExecutionStatus
+} from '../../store/slices/exerciseSlice';
 import { showToast } from '../../store/slices/uiSlice';
-import { SleepService, ExerciseService } from '../../services/activityService';
+import { SleepService, ExerciseService, PhysiotherapyService } from '../../services/activityService';
 import { formatExerciseDateTime, formatSleepDate } from '../../utils/dateUtils';
 import {
   Moon,
@@ -20,9 +26,16 @@ import {
   ChevronDown,
   ChevronUp,
   CheckCircle2,
+  Check,
   FileText
 } from 'lucide-react';
-import { SleepLog, ExerciseLog, PhysiotherapyDetails } from '../../types';
+import {
+  SleepLog,
+  ExerciseLog,
+  PhysiotherapyDetails,
+  PhysiotherapyPrescription,
+  PhysiotherapyExecution
+} from '../../types';
 import { PhysiotherapyDetailsModal } from '../activities/PhysiotherapyDetailsModal';
 
 const UPPER_LIMB_LABELS: Record<string, { code: string; nerve: string; color: string }> = {
@@ -51,13 +64,34 @@ export const ActivitiesScreen: React.FC = () => {
   const dispatch = useAppDispatch();
   const sleepLogs = useAppSelector((state) => state.sleep.logs);
   const exerciseLogs = useAppSelector((state) => state.exercise.logs);
+  const physioPrescriptions = useAppSelector((state) => state.exercise.prescriptions || []);
+  const todayExecutions = useAppSelector((state) => state.exercise.todayExecutions || []);
   const user = useAppSelector((state) => state.auth.user);
+
+  const completedExecsCount = todayExecutions.filter((e) => e.status === 'completed').length;
+  const pendingPhysioCount = todayExecutions.filter((e) => e.status === 'pending').length;
+  const physioAdherencePercent =
+    todayExecutions.length > 0 ? Math.round((completedExecsCount / todayExecutions.length) * 100) : 100;
 
   const [activeTab, setActiveTab] = useState<'sono' | 'exercicio'>('sono');
   const [isSleepModalOpen, setIsSleepModalOpen] = useState(false);
   const [isExerciseModalOpen, setIsExerciseModalOpen] = useState(false);
 
-  // Physiotherapy Details Modal State
+  // Physiotherapy Prescription form state
+  const [isRxModalOpen, setIsRxModalOpen] = useState(false);
+  const [rxToDelete, setRxToDelete] = useState<PhysiotherapyPrescription | null>(null);
+  const [rxTitle, setRxTitle] = useState('Neurodinâmica / Mobilização Neural ULNT');
+  const [rxPrescribedBy, setRxPrescribedBy] = useState('Dra. Patrícia Lima (Fisioterapeuta)');
+  const [rxIsChronic, setRxIsChronic] = useState(false);
+  const [rxTimesPerDay, setRxTimesPerDay] = useState(2);
+  const [rxDurationDays, setRxDurationDays] = useState(14);
+  const [rxStartDate, setRxStartDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [rxScheduledTimesStr, setRxScheduledTimesStr] = useState('09:00, 16:00');
+  const [rxInstructions, setRxInstructions] = useState('Realizar 3 séries de 10 repetições por membro. Respeitar o limiar de dor.');
+  const [rxPhysioDetails, setRxPhysioDetails] = useState<PhysiotherapyDetails | undefined>(undefined);
+  const [isRxDetailsModalOpen, setIsRxDetailsModalOpen] = useState(false);
+
+  // Physiotherapy Details Modal State for ad-hoc log
   const [isPhysioModalOpen, setIsPhysioModalOpen] = useState(false);
   const [physioDetails, setPhysioDetails] = useState<PhysiotherapyDetails | undefined>(undefined);
   const [expandedPhysioCardId, setExpandedPhysioCardId] = useState<string | null>(null);
@@ -68,6 +102,16 @@ export const ActivitiesScreen: React.FC = () => {
     const offset = now.getTimezoneOffset();
     const local = new Date(now.getTime() - offset * 60 * 1000);
     return local.toISOString().slice(0, 16);
+  };
+
+  const calculateEndDateStr = (start: string, days: number): string => {
+    try {
+      const date = new Date(start + 'T00:00:00');
+      date.setDate(date.getDate() + Number(days) - 1);
+      return date.toLocaleDateString('pt-BR');
+    } catch {
+      return '';
+    }
   };
 
   // Sleep form state
@@ -90,6 +134,84 @@ export const ActivitiesScreen: React.FC = () => {
   const [exerciseToDelete, setExerciseToDelete] = useState<ExerciseLog | null>(null);
   // Delete sleep state
   const [sleepToDelete, setSleepToDelete] = useState<SleepLog | null>(null);
+
+  const handleTogglePhysioExecution = async (exec: PhysiotherapyExecution) => {
+    dispatch(togglePhysioExecutionStatus({ id: exec.id }));
+    await PhysiotherapyService.toggleExecution(user?.uid || 'user-anon', exec.id);
+    if (exec.status === 'pending') {
+      dispatch(showToast({ message: 'Sessão de fisioterapia realizada! Parabéns pelo cuidado!' }));
+    } else {
+      dispatch(showToast({ message: 'Sessão remarcada como pendente.' }));
+    }
+  };
+
+  const handleCreatePrescription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!rxTitle.trim()) {
+      dispatch(showToast({ message: 'Informe o nome do protocolo de fisioterapia.', type: 'error' }));
+      return;
+    }
+
+    if (!rxIsChronic) {
+      if (!rxTimesPerDay || Number(rxTimesPerDay) < 1) {
+        dispatch(showToast({ message: 'Informe o número de execuções diárias.', type: 'error' }));
+        return;
+      }
+      if (!rxDurationDays || Number(rxDurationDays) < 1) {
+        dispatch(showToast({ message: 'Informe o período em dias indicado.', type: 'error' }));
+        return;
+      }
+    }
+
+    const times = rxScheduledTimesStr
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    let calculatedEndDate: string | undefined = undefined;
+    if (!rxIsChronic && rxDurationDays > 0) {
+      const start = new Date(rxStartDate + 'T00:00:00');
+      start.setDate(start.getDate() + Number(rxDurationDays) - 1);
+      calculatedEndDate = start.toISOString().split('T')[0];
+    }
+
+    const newRx = await PhysiotherapyService.createPrescription(user?.uid || 'user-anon', {
+      title: rxTitle.trim(),
+      prescribedBy: rxPrescribedBy.trim() || undefined,
+      isChronic: rxIsChronic,
+      timesPerDay: rxIsChronic ? undefined : Number(rxTimesPerDay),
+      durationDays: rxIsChronic ? undefined : Number(rxDurationDays),
+      startDate: rxStartDate,
+      endDate: calculatedEndDate,
+      scheduledTimes: times.length > 0 ? times : ['09:00', '16:00'],
+      instructions: rxInstructions.trim() || undefined,
+      isActive: true,
+      physiotherapyDetails: rxPhysioDetails
+    });
+
+    dispatch(addPhysioPrescription(newRx));
+    dispatch(showToast({ message: `Prescrição "${newRx.title}" cadastrada com sucesso!` }));
+    setIsRxModalOpen(false);
+    setRxTitle('Neurodinâmica / Mobilização Neural ULNT');
+    setRxPrescribedBy('Dra. Patrícia Lima (Fisioterapeuta)');
+    setRxInstructions('Realizar 3 séries de 10 repetições por membro. Respeitar o limiar de dor.');
+    setRxPhysioDetails(undefined);
+    setRxIsChronic(false);
+    setRxTimesPerDay(2);
+    setRxDurationDays(14);
+    setRxScheduledTimesStr('09:00, 16:00');
+  };
+
+  const handleConfirmDeletePrescription = async () => {
+    if (!rxToDelete) return;
+    try {
+      await PhysiotherapyService.deletePrescription(user?.uid || 'user-anon', rxToDelete.id);
+      dispatch(deletePhysioPrescription(rxToDelete.id));
+      dispatch(showToast({ message: `Prescrição "${rxToDelete.title}" removida com sucesso.` }));
+    } finally {
+      setRxToDelete(null);
+    }
+  };
 
   const handleActivityTypeChange = (newType: ExerciseLog['activityType']) => {
     setActivityType(newType);
@@ -201,15 +323,23 @@ export const ActivitiesScreen: React.FC = () => {
         </button>
         <button
           type="button"
+          id="btn-tab-fisioterapia-exercicio"
           onClick={() => setActiveTab('exercicio')}
-          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 relative ${
             activeTab === 'exercicio'
               ? 'bg-[#103557] text-white shadow-xs'
               : 'text-[#53606B] hover:text-[#103557]'
           }`}
         >
           <Activity className="w-3.5 h-3.5" />
-          <span>Fisioterapia & Exercícios ({exerciseLogs.length})</span>
+          <span>Fisioterapia & Exercícios</span>
+          {pendingPhysioCount > 0 ? (
+            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#D96B5B] text-white animate-pulse">
+              {pendingPhysioCount}
+            </span>
+          ) : (
+            <span className="text-[11px] opacity-75">({exerciseLogs.length})</span>
+          )}
         </button>
       </div>
 
@@ -295,29 +425,267 @@ export const ActivitiesScreen: React.FC = () => {
 
       {/* Exercício View */}
       {activeTab === 'exercicio' && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-[#103557]">Movimento & Reabilitação</h3>
-              <p className="text-xs text-[#53606B]">Registre exercícios orientados por fisioterapeutas</p>
+        <div className="space-y-4">
+          {/* Card de Resumo de Adesão Diária da Fisioterapia */}
+          <div className="bg-white rounded-2xl p-4 border border-[#DCE3E8] elevation-1 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <span className="text-xs text-[#53606B] font-semibold block">Adesão às Atividades de Fisioterapia Hoje</span>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="text-2xl font-extrabold text-[#103557] tabular-nums">{physioAdherencePercent}%</span>
+                <span className="text-xs text-[#53606B]">
+                  ({completedExecsCount} de {todayExecutions.length} {todayExecutions.length === 1 ? 'sessão realizada' : 'sessões realizadas'})
+                </span>
+              </div>
+              <div className="text-[11px] font-semibold mt-1">
+                {pendingPhysioCount === 0 && todayExecutions.length > 0 ? (
+                  <span className="text-[#00875A] flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#00875A]" />
+                    Todas as atividades prescritas de hoje foram concluídas!
+                  </span>
+                ) : pendingPhysioCount > 0 ? (
+                  <span className="text-[#D96B5B] flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-[#D96B5B]" />
+                    Faltam <strong>{pendingPhysioCount}</strong> {pendingPhysioCount === 1 ? 'atividade prescrita' : 'atividades prescritas'} hoje
+                  </span>
+                ) : (
+                  <span className="text-[#73777F]">Nenhuma atividade prescrita agendada para hoje</span>
+                )}
+              </div>
             </div>
-            <button
-              onClick={() => setIsExerciseModalOpen(true)}
-              className="flex items-center gap-1 bg-[#2B4C6F] hover:bg-[#103557] text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Registrar Atividade</span>
-            </button>
+
+            <div className="w-12 h-12 rounded-full border-4 border-[#EEF2F5] border-t-[#2B4C6F] flex items-center justify-center font-extrabold text-xs text-[#103557] shrink-0">
+              {completedExecsCount}/{todayExecutions.length}
+            </div>
           </div>
 
+          {/* 1. Sessões Prescritas para Hoje */}
           <div className="space-y-2.5">
-            {exerciseLogs.length === 0 ? (
-              <div className="text-center py-8 px-4 bg-white rounded-2xl border border-dashed border-[#DCE3E8] space-y-2">
-                <Activity className="w-8 h-8 text-[#73777F] mx-auto opacity-50" />
-                <p className="text-xs font-semibold text-[#53606B]">Nenhuma atividade registrada ainda</p>
-                <p className="text-[11px] text-[#73777F]">Clique em "Registrar Atividade" para adicionar seu histórico de movimento e reabilitação.</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-[#103557]">Sessões Prescritas para Hoje</h3>
+                {pendingPhysioCount > 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#D96B5B] text-white">
+                    Faltam {pendingPhysioCount}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {todayExecutions.length === 0 ? (
+              <div className="text-center py-6 px-4 bg-white rounded-2xl border border-dashed border-[#DCE3E8] space-y-1">
+                <Activity className="w-7 h-7 text-[#73777F] mx-auto opacity-50" />
+                <p className="text-xs font-semibold text-[#53606B]">Nenhuma sessão de fisioterapia agendada para hoje</p>
+                <p className="text-[11px] text-[#73777F]">
+                  Cadastre uma prescrição abaixo para acompanhar o número de execuções diárias e o período prescrito.
+                </p>
               </div>
             ) : (
+              <div className="space-y-2">
+                {todayExecutions.map((exec) => {
+                  const isDone = exec.status === 'completed';
+                  return (
+                    <div
+                      key={exec.id}
+                      className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                        isDone
+                          ? 'bg-[#F0FAF5] border-[#AFF0D8]'
+                          : 'bg-white border-[#DCE3E8] hover:border-[#2B4C6F] elevation-1'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePhysioExecution(exec)}
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all shrink-0 active:scale-90 ${
+                            isDone
+                              ? 'bg-[#00875A] text-white shadow-xs'
+                              : 'border-2 border-[#DCE3E8] hover:border-[#2B4C6F] text-transparent hover:text-[#2B4C6F]/40'
+                          }`}
+                          title={isDone ? 'Marcar como pendente' : 'Marcar como realizada'}
+                          aria-label={`Marcar sessão ${exec.sessionNumber} como ${isDone ? 'pendente' : 'realizada'}`}
+                        >
+                          <Check className="w-5 h-5 stroke-[3]" />
+                        </button>
+
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`text-xs font-bold truncate ${isDone ? 'line-through text-[#53606B]' : 'text-[#103557]'}`}>
+                              {exec.prescriptionTitle}
+                            </span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[#EEF2F5] text-[#53606B] font-semibold">
+                              {exec.sessionNumber}ª execução do dia
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-[11px] text-[#53606B] mt-0.5">
+                            <span className="flex items-center gap-1 font-semibold text-[#2B4C6F]">
+                              <Clock className="w-3 h-3" /> Horário: {exec.scheduledTime}
+                            </span>
+                            {exec.completedAt && (
+                              <span className="text-[10px] text-[#00875A] font-medium">
+                                • Concluída às {new Date(exec.completedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePhysioExecution(exec)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 active:scale-95 ${
+                          isDone
+                            ? 'bg-[#AFF0D8] text-[#003B2E] hover:bg-[#85E2C2]'
+                            : 'bg-[#103557] hover:bg-[#2B4C6F] text-white shadow-xs'
+                        }`}
+                      >
+                        {isDone ? 'Concluída ✓' : 'Realizar ✓'}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* 2. Prescrições de Fisioterapia & Reabilitação */}
+          <div className="space-y-2.5 pt-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-[#103557]">Prescrições de Fisioterapia</h3>
+                <p className="text-xs text-[#53606B]">Protocolos com número de execuções diárias e período em dias</p>
+              </div>
+              <button
+                type="button"
+                id="btn-new-physio-prescription"
+                onClick={() => setIsRxModalOpen(true)}
+                className="flex items-center gap-1 bg-[#103557] hover:bg-[#2B4C6F] text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Nova Prescrição</span>
+              </button>
+            </div>
+
+            {physioPrescriptions.length === 0 ? (
+              <div className="text-center py-6 px-4 bg-white rounded-2xl border border-dashed border-[#DCE3E8] space-y-1">
+                <p className="text-xs font-semibold text-[#53606B]">Nenhuma prescrição de fisioterapia cadastrada</p>
+                <p className="text-[11px] text-[#73777F]">
+                  Toque em "Nova Prescrição" para registrar o protocolo com número de execuções diárias e duração.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {physioPrescriptions.map((rx) => (
+                  <div key={rx.id} className="bg-white rounded-2xl p-4 border border-[#DCE3E8] elevation-1 hover:border-[#B3C8DB] transition-all">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-sm font-bold text-[#103557]">{rx.title}</h4>
+                          {rx.isChronic === false ? (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FFF0D4] text-[#8C5800] font-bold border border-[#E8D1A7]">
+                              Tratamento Temporário • {rx.timesPerDay || rx.scheduledTimes.length}x ao dia ({rx.durationDays} dias)
+                            </span>
+                          ) : (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#E2F0FD] text-[#2B4C6F] font-semibold border border-[#DCE3E8]">
+                              Protocolo Contínuo
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="text-xs text-[#53606B] flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5 text-[#2B4C6F]" />
+                          <span>Horários Programados: <strong>{rx.scheduledTimes.join(', ')}</strong></span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setRxToDelete(rx)}
+                        className="text-[#73777F] hover:text-[#BA1A1A] hover:bg-[#FFDAD6]/40 p-2 rounded-xl transition-colors"
+                        title={`Excluir ${rx.title}`}
+                        aria-label={`Excluir prescrição ${rx.title}`}
+                      >
+                        <Trash2 className="w-4 h-4 text-[#BA1A1A]" />
+                      </button>
+                    </div>
+
+                    {rx.instructions && (
+                      <p className="text-xs text-[#53606B] bg-[#F6F8FA] p-2.5 rounded-xl border border-[#DCE3E8]/60 mt-2.5">
+                        <strong>Orientações:</strong> {rx.instructions}
+                      </p>
+                    )}
+
+                    {/* ULNT / Physiotherapy details */}
+                    {rx.physiotherapyDetails && (
+                      <div className="mt-2.5 pt-2.5 border-t border-[#DCE3E8]/60 flex flex-wrap gap-2 text-[11px]">
+                        {rx.physiotherapyDetails.upperLimbExercises && rx.physiotherapyDetails.upperLimbExercises.length > 0 && (
+                          <div className="flex items-center gap-1 flex-wrap">
+                            <span className="font-bold text-[#53606B]">Exercícios ULNT:</span>
+                            {rx.physiotherapyDetails.upperLimbExercises.map((ex) => (
+                              <span key={ex} className="px-1.5 py-0.5 rounded bg-[#E2F0FD] text-[#103557] font-semibold text-[10px]">
+                                {UPPER_LIMB_LABELS[ex]?.code || ex.toUpperCase()}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {rx.physiotherapyDetails.sets && (
+                          <span className="text-[#53606B]">
+                            • Dosagem: <strong>{rx.physiotherapyDetails.sets} séries x {rx.physiotherapyDetails.repetitions} reps</strong> ({rx.physiotherapyDetails.holdTimeSeconds}s sustentação)
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-[#DCE3E8]/60 flex-wrap gap-2">
+                      <div className="text-[11px] text-[#73777F] italic">
+                        {rx.prescribedBy ? `Prescrito por: ${rx.prescribedBy}` : ''}
+                        {rx.isChronic === false ? (
+                          <span className="text-[#8C5800] font-semibold not-italic ml-1">
+                            • Período: {rx.durationDays} dias {rx.endDate ? `(término em ${new Date(rx.endDate + 'T00:00:00').toLocaleDateString('pt-BR')})` : ''}
+                          </span>
+                        ) : (
+                          <span className="ml-1">• Regime Contínuo</span>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setRxToDelete(rx)}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#BA1A1A] hover:text-[#93000A] bg-[#FFDAD6]/30 hover:bg-[#FFDAD6]/60 px-2.5 py-1 rounded-full border border-[#D96B5B]/30 transition-colors active:scale-95"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        <span>Excluir Prescrição</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 3. Histórico de Atividades Realizadas & Registros Avulsos */}
+          <div className="space-y-2.5 pt-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-[#103557]">Histórico de Atividades Realizadas</h3>
+                <p className="text-xs text-[#53606B]">Registros avulsos de alongamento, caminhada e movimentos</p>
+              </div>
+              <button
+                onClick={() => setIsExerciseModalOpen(true)}
+                className="flex items-center gap-1 bg-[#2B4C6F] hover:bg-[#103557] text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Registrar Atividade Avulsa</span>
+              </button>
+            </div>
+
+            <div className="space-y-2.5">
+              {exerciseLogs.length === 0 ? (
+                <div className="text-center py-8 px-4 bg-white rounded-2xl border border-dashed border-[#DCE3E8] space-y-2">
+                  <Activity className="w-8 h-8 text-[#73777F] mx-auto opacity-50" />
+                  <p className="text-xs font-semibold text-[#53606B]">Nenhuma atividade avulsa registrada ainda</p>
+                  <p className="text-[11px] text-[#73777F]">Clique em "Registrar Atividade Avulsa" para adicionar histórico de movimento livre.</p>
+                </div>
+              ) : (
               exerciseLogs.map((e) => {
                 const impactColor =
                   e.painImpact === 'aliviou'
@@ -479,6 +847,7 @@ export const ActivitiesScreen: React.FC = () => {
               })
             )}
           </div>
+        </div>
         </div>
       )}
 
@@ -867,7 +1236,7 @@ export const ActivitiesScreen: React.FC = () => {
         </div>
       )}
 
-      {/* Janela de Detalhamento da Fisioterapia / Reabilitação (Neurodinâmica ULNT) */}
+      {/* Janela de Detalhamento da Fisioterapia / Reabilitação (Neurodinâmica ULNT) para atividade avulsa */}
       <PhysiotherapyDetailsModal
         isOpen={isPhysioModalOpen}
         onClose={() => setIsPhysioModalOpen(false)}
@@ -881,6 +1250,325 @@ export const ActivitiesScreen: React.FC = () => {
           );
         }}
       />
+
+      {/* Janela de Detalhamento da Fisioterapia para Prescrição */}
+      <PhysiotherapyDetailsModal
+        isOpen={isRxDetailsModalOpen}
+        onClose={() => setIsRxDetailsModalOpen(false)}
+        initialData={rxPhysioDetails}
+        onSave={(details) => {
+          setRxPhysioDetails(details);
+          dispatch(
+            showToast({
+              message: 'Protocolo neurodinâmico anexado à prescrição!'
+            })
+          );
+        }}
+      />
+
+      {/* Modal de Cadastro de Nova Prescrição de Fisioterapia */}
+      {isRxModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/40 backdrop-blur-xs">
+          <div className="bg-white w-full max-w-md rounded-3xl overflow-hidden border border-[#DCE3E8] elevation-3 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
+            <div className="bg-[#103557] text-white px-5 py-3.5 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#88C6B0]" />
+                <h3 className="text-sm font-bold">Nova Prescrição de Fisioterapia</h3>
+              </div>
+              <button
+                type="button"
+                id="btn-close-rx-modal"
+                onClick={() => setIsRxModalOpen(false)}
+                className="text-white/80 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePrescription} className="p-5 space-y-4 overflow-y-auto">
+              {/* Título do Protocolo */}
+              <div>
+                <label className="block text-xs font-bold text-[#103557] mb-1">
+                  Nome do Protocolo / Atividade Prescrita *
+                </label>
+                <input
+                  id="input-rx-title"
+                  type="text"
+                  required
+                  value={rxTitle}
+                  onChange={(e) => setRxTitle(e.target.value)}
+                  placeholder="Ex: Neurodinâmica ULNT, Fortalecimento Cervical..."
+                  className="w-full px-3 py-2 rounded-xl border border-[#DCE3E8] text-xs bg-white text-[#103557] focus:outline-hidden focus:border-[#2B4C6F]"
+                />
+              </div>
+
+              {/* Fisioterapeuta / Prescritor */}
+              <div>
+                <label className="block text-xs font-bold text-[#103557] mb-1">
+                  Fisioterapeuta ou Especialista Prescritor
+                </label>
+                <input
+                  id="input-rx-prescriber"
+                  type="text"
+                  value={rxPrescribedBy}
+                  onChange={(e) => setRxPrescribedBy(e.target.value)}
+                  placeholder="Ex: Dra. Patrícia Lima (Fisioterapeuta)"
+                  className="w-full px-3 py-2 rounded-xl border border-[#DCE3E8] text-xs bg-white text-[#103557] focus:outline-hidden focus:border-[#2B4C6F]"
+                />
+              </div>
+
+              {/* Tipo de Tratamento (Mesma regra do Medicamento: Temporário vs Contínuo) */}
+              <div>
+                <label className="block text-xs font-bold text-[#103557] mb-1.5">
+                  Regime do Tratamento / Indicação
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    id="btn-rx-is-chronic-false"
+                    onClick={() => setRxIsChronic(false)}
+                    className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-left ${
+                      !rxIsChronic
+                        ? 'bg-[#E2F0FD] border-[#2B4C6F] text-[#103557]'
+                        : 'bg-[#F6F8FA] border-[#DCE3E8] text-[#53606B] hover:bg-white'
+                    }`}
+                  >
+                    <span className="block font-extrabold text-[11px]">Tratamento Temporário</span>
+                    <span className="text-[10px] font-normal opacity-85 block">Período e execuções diárias</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    id="btn-rx-is-chronic-true"
+                    onClick={() => setRxIsChronic(true)}
+                    className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-left ${
+                      rxIsChronic
+                        ? 'bg-[#E2F0FD] border-[#2B4C6F] text-[#103557]'
+                        : 'bg-[#F6F8FA] border-[#DCE3E8] text-[#53606B] hover:bg-white'
+                    }`}
+                  >
+                    <span className="block font-extrabold text-[11px]">Protocolo Contínuo</span>
+                    <span className="text-[10px] font-normal opacity-85 block">Manutenção sem prazo final</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Campos para Tratamento Temporário: Execuções diárias e Período de dias */}
+              {!rxIsChronic && (
+                <div className="p-3.5 bg-[#FFF0D4]/40 rounded-2xl border border-[#E8D1A7] space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-[#8C5800] mb-1">
+                        Execuções Diárias *
+                      </label>
+                      <input
+                        id="input-rx-times-per-day"
+                        type="number"
+                        min={1}
+                        max={10}
+                        required
+                        value={rxTimesPerDay}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setRxTimesPerDay(val);
+                          if (val === 1) setRxScheduledTimesStr('09:00');
+                          else if (val === 2) setRxScheduledTimesStr('09:00, 16:00');
+                          else if (val === 3) setRxScheduledTimesStr('08:00, 14:00, 20:00');
+                          else if (val === 4) setRxScheduledTimesStr('08:00, 12:00, 16:00, 20:00');
+                        }}
+                        className="w-full px-3 py-2 rounded-xl border border-[#E8D1A7] text-xs bg-white text-[#103557] font-semibold"
+                      />
+                      <span className="text-[10px] text-[#8C5800]/80 mt-0.5 block">Sessões por dia</span>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-[#8C5800] mb-1">
+                        Período Indicado (Dias) *
+                      </label>
+                      <input
+                        id="input-rx-duration-days"
+                        type="number"
+                        min={1}
+                        max={365}
+                        required
+                        value={rxDurationDays}
+                        onChange={(e) => setRxDurationDays(Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-xl border border-[#E8D1A7] text-xs bg-white text-[#103557] font-semibold"
+                      />
+                      <span className="text-[10px] text-[#8C5800]/80 mt-0.5 block">Ex: 7, 14, 21 dias</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#8C5800] mb-1">
+                      Data de Início do Tratamento
+                    </label>
+                    <input
+                      id="input-rx-start-date"
+                      type="date"
+                      value={rxStartDate}
+                      onChange={(e) => setRxStartDate(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-[#E8D1A7] text-xs bg-white text-[#103557] font-medium"
+                    />
+                  </div>
+
+                  {rxDurationDays > 0 && rxStartDate && (
+                    <div className="text-[11px] text-[#8C5800] bg-white/70 p-2 rounded-xl border border-[#E8D1A7]/60 leading-relaxed">
+                      <strong>Resumo do Período:</strong> Duração de <strong>{rxDurationDays} dias</strong>. Término previsto em{' '}
+                      <strong>{calculateEndDateStr(rxStartDate, rxDurationDays)}</strong> (total de{' '}
+                      <strong>{rxDurationDays * (rxTimesPerDay || 1)} sessões</strong> no tratamento).
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Horários Programados */}
+              <div>
+                <label className="block text-xs font-bold text-[#103557] mb-1">
+                  Horários Programados (separados por vírgula)
+                </label>
+                <div className="relative">
+                  <Clock className="w-4 h-4 text-[#73777F] absolute left-3 top-2.5" />
+                  <input
+                    id="input-rx-scheduled-times"
+                    type="text"
+                    value={rxScheduledTimesStr}
+                    onChange={(e) => setRxScheduledTimesStr(e.target.value)}
+                    placeholder="Ex: 09:00, 16:00"
+                    className="w-full pl-9 pr-3 py-2 rounded-xl border border-[#DCE3E8] text-xs bg-white text-[#103557] focus:outline-hidden focus:border-[#2B4C6F]"
+                  />
+                </div>
+                <span className="text-[10px] text-[#53606B] mt-1 block">
+                  Estes horários geram as sessões diárias rastreáveis no painel de adesão.
+                </span>
+              </div>
+
+              {/* Orientações / Instruções */}
+              <div>
+                <label className="block text-xs font-bold text-[#103557] mb-1">
+                  Orientações Clínicas & Recomendações
+                </label>
+                <textarea
+                  id="input-rx-instructions"
+                  rows={2}
+                  value={rxInstructions}
+                  onChange={(e) => setRxInstructions(e.target.value)}
+                  placeholder="Ex: Realizar 3 séries de 10 reps. Em caso de pontada aguda, reduzir amplitude."
+                  className="w-full px-3 py-2 rounded-xl border border-[#DCE3E8] text-xs bg-white text-[#103557] focus:outline-hidden focus:border-[#2B4C6F]"
+                />
+              </div>
+
+              {/* Detalhes de Neurodinâmica ULNT Opcionais */}
+              <div className="pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#103557]">Detalhamento Neurodinâmico (ULNT)</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsRxDetailsModalOpen(true)}
+                    className="text-[11px] font-bold text-[#2B4C6F] hover:underline flex items-center gap-1"
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>{rxPhysioDetails ? 'Editar Detalhes ULNT' : 'Configurar Detalhes ULNT'}</span>
+                  </button>
+                </div>
+                {rxPhysioDetails ? (
+                  <div className="mt-1.5 p-2 bg-[#E2F0FD]/40 rounded-xl border border-[#DCE3E8] text-xs space-y-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-semibold text-[#103557]">Exercícios:</span>
+                      {rxPhysioDetails.upperLimbExercises?.map((k) => (
+                        <span key={k} className="px-1.5 py-0.5 rounded bg-white text-[10px] font-bold border border-[#DCE3E8]">
+                          {UPPER_LIMB_LABELS[k]?.code || k}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="text-[11px] text-[#53606B]">
+                      {rxPhysioDetails.sets} séries x {rxPhysioDetails.repetitions} reps ({rxPhysioDetails.holdTimeSeconds}s sustentação)
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-[#73777F] mt-0.5">
+                    Opcional: configure testes do nervo mediano, radial ou ulnar (ULNT 1, 2a, 2b, 3) e dosagem técnica.
+                  </p>
+                )}
+              </div>
+
+              {/* Botões do Formulário */}
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#DCE3E8]">
+                <button
+                  type="button"
+                  id="btn-cancel-rx"
+                  onClick={() => setIsRxModalOpen(false)}
+                  className="px-4 py-2 text-xs font-bold text-[#53606B] hover:text-[#103557] rounded-full transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  id="btn-submit-rx"
+                  className="px-5 py-2 text-xs font-bold bg-[#103557] hover:bg-[#2B4C6F] text-white rounded-full shadow-xs active:scale-95 transition-all"
+                >
+                  Cadastrar Prescrição
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Exclusão de Prescrição de Fisioterapia */}
+      {rxToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/40 backdrop-blur-xs">
+          <div className="bg-white w-full max-w-sm rounded-3xl overflow-hidden border border-[#DCE3E8] elevation-3 animate-in zoom-in-95 duration-150">
+            <div className="bg-[#BA1A1A] text-white px-5 py-3.5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Trash2 className="w-4 h-4 text-white" />
+                <h3 className="text-sm font-bold">Excluir Prescrição</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRxToDelete(null)}
+                className="text-white/80 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5 space-y-3.5">
+              <p className="text-xs text-[#53606B] leading-relaxed">
+                Tem certeza que deseja excluir esta prescrição de fisioterapia? As sessões programadas para hoje também serão removidas.
+              </p>
+              <div className="bg-[#F6F8FA] p-3 rounded-2xl border border-[#DCE3E8]/70 text-xs space-y-1.5">
+                <div className="font-bold text-[#103557]">{rxToDelete.title}</div>
+                <div className="text-[11px] text-[#53606B]">
+                  {rxToDelete.isChronic === false
+                    ? `${rxToDelete.timesPerDay || rxToDelete.scheduledTimes.length} execuções/dia • ${rxToDelete.durationDays} dias`
+                    : 'Regime Contínuo'}
+                </div>
+                {rxToDelete.prescribedBy && (
+                  <div className="text-[10px] text-[#73777F]">Prescrito por: {rxToDelete.prescribedBy}</div>
+                )}
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  id="btn-cancel-delete-rx"
+                  onClick={() => setRxToDelete(null)}
+                  className="px-4 py-2 text-xs font-bold text-[#53606B] hover:text-[#103557] rounded-full transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  id="btn-confirm-delete-rx"
+                  onClick={handleConfirmDeletePrescription}
+                  className="px-4 py-2 text-xs font-bold bg-[#BA1A1A] hover:bg-[#93000A] text-white rounded-full shadow-xs active:scale-95 transition-all"
+                >
+                  Sim, Excluir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

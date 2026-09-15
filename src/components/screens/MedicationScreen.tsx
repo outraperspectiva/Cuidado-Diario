@@ -22,8 +22,24 @@ export const MedicationScreen: React.FC = () => {
   const [instructions, setInstructions] = useState('');
   const [prescribedBy, setPrescribedBy] = useState('');
 
+  // Non-chronic medication fields
+  const [isChronic, setIsChronic] = useState(true);
+  const [dosesPerDay, setDosesPerDay] = useState<number>(2);
+  const [durationDays, setDurationDays] = useState<number>(7);
+  const [startDate, setStartDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
+
   const takenCount = todayIntakes.filter((i) => i.status === 'taken').length;
   const adherencePercent = todayIntakes.length > 0 ? Math.round((takenCount / todayIntakes.length) * 100) : 100;
+
+  const calculateEndDateStr = (start: string, days: number): string => {
+    try {
+      const date = new Date(start + 'T00:00:00');
+      date.setDate(date.getDate() + days - 1);
+      return date.toLocaleDateString('pt-BR');
+    } catch {
+      return '';
+    }
+  };
 
   const handleCreateMed = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +48,28 @@ export const MedicationScreen: React.FC = () => {
       return;
     }
 
+    if (!isChronic) {
+      if (!dosesPerDay || Number(dosesPerDay) < 1) {
+        dispatch(showToast({ message: 'Informe o número de doses diárias para o uso não crônico.', type: 'error' }));
+        return;
+      }
+      if (!durationDays || Number(durationDays) < 1) {
+        dispatch(showToast({ message: 'Informe o período de utilização (em dias) para o uso não crônico.', type: 'error' }));
+        return;
+      }
+    }
+
     const times = scheduledTimesStr
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
+
+    let calculatedEndDate: string | undefined = undefined;
+    if (!isChronic && durationDays > 0) {
+      const start = new Date(startDate + 'T00:00:00');
+      start.setDate(start.getDate() + Number(durationDays) - 1);
+      calculatedEndDate = start.toISOString().split('T')[0];
+    }
 
     const newMed = await MedicationService.createMedication(user?.uid || 'user-anon', {
       name: name.trim(),
@@ -45,6 +79,11 @@ export const MedicationScreen: React.FC = () => {
       instructions: instructions.trim(),
       prescribedBy: prescribedBy.trim() || undefined,
       isActive: true,
+      isChronic,
+      dosesPerDay: isChronic ? undefined : Number(dosesPerDay),
+      durationDays: isChronic ? undefined : Number(durationDays),
+      startDate: isChronic ? undefined : startDate,
+      endDate: isChronic ? undefined : calculatedEndDate,
     });
 
     dispatch(addMedication(newMed));
@@ -54,6 +93,10 @@ export const MedicationScreen: React.FC = () => {
     setDosage('');
     setInstructions('');
     setPrescribedBy('');
+    setIsChronic(true);
+    setDosesPerDay(2);
+    setDurationDays(7);
+    setScheduledTimesStr('08:00, 20:00');
   };
 
   const handleConfirmDelete = async () => {
@@ -216,7 +259,7 @@ export const MedicationScreen: React.FC = () => {
               <div key={med.id} className="bg-white rounded-2xl p-4 border border-[#DCE3E8] elevation-1 hover:border-[#B7E7F7] transition-all">
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="text-sm font-bold text-[#103557]">{med.name}</h4>
                       <span className="text-xs px-2 py-0.5 rounded-full bg-[#E2F0FD] text-[#2B4C6F] font-semibold">
                         {med.dosage}
@@ -224,6 +267,15 @@ export const MedicationScreen: React.FC = () => {
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F6F8FA] text-[#53606B] capitalize border border-[#DCE3E8]">
                         {med.category.replace('_', ' ')}
                       </span>
+                      {med.isChronic === false ? (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FFF0D4] text-[#8C5800] font-bold border border-[#E8D1A7]">
+                          Uso Não Crônico • {med.dosesPerDay || med.scheduledTimes.length} doses/dia ({med.durationDays} dias)
+                        </span>
+                      ) : (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#E2F0FD] text-[#2B4C6F] font-semibold border border-[#B3C8DB]">
+                          Uso Contínuo
+                        </span>
+                      )}
                     </div>
                     <div className="text-xs text-[#53606B] mt-1.5 flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-[#356572]" />
@@ -248,9 +300,16 @@ export const MedicationScreen: React.FC = () => {
                   </p>
                 )}
 
-                <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-[#DCE3E8]/60">
+                <div className="flex items-center justify-between pt-2.5 mt-2.5 border-t border-[#DCE3E8]/60 flex-wrap gap-2">
                   <div className="text-[11px] text-[#73777F] italic">
-                    {med.prescribedBy ? `Prescrito por: ${med.prescribedBy}` : 'Uso contínuo'}
+                    {med.prescribedBy ? `Prescrito por: ${med.prescribedBy}` : ''}
+                    {med.isChronic === false ? (
+                      <span className="text-[#8C5800] font-semibold not-italic ml-1">
+                        • Tratamento temporário de {med.durationDays} dias {med.endDate ? `(término em ${new Date(med.endDate + 'T00:00:00').toLocaleDateString('pt-BR')})` : ''}
+                      </span>
+                    ) : (
+                      <span className="ml-1">• Uso contínuo / crônico</span>
+                    )}
                   </div>
 
                   <button
@@ -369,6 +428,114 @@ export const MedicationScreen: React.FC = () => {
                   </select>
                 </div>
               </div>
+
+              {/* Tipo de Tratamento: Crônico vs Não Crônico */}
+              <div>
+                <label className="block text-xs font-bold text-[#103557] mb-1.5">
+                  Regime de Utilização
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsChronic(true)}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center ${
+                      isChronic
+                        ? 'bg-[#103557] text-white border-[#103557] shadow-xs'
+                        : 'bg-[#F6F8FA] text-[#53606B] border-[#DCE3E8] hover:border-[#B3C8DB]'
+                    }`}
+                  >
+                    Uso Contínuo / Crônico
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsChronic(false);
+                      if (dosesPerDay === 1) setScheduledTimesStr('08:00');
+                      else if (dosesPerDay === 2) setScheduledTimesStr('08:00, 20:00');
+                    }}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center ${
+                      !isChronic
+                        ? 'bg-[#103557] text-white border-[#103557] shadow-xs'
+                        : 'bg-[#F6F8FA] text-[#53606B] border-[#DCE3E8] hover:border-[#B3C8DB]'
+                    }`}
+                  >
+                    Uso Não Crônico / Temporário
+                  </button>
+                </div>
+              </div>
+
+              {/* Campos específicos quando for Uso Não Crônico */}
+              {!isChronic && (
+                <div className="p-3.5 rounded-2xl bg-[#FFF9E6] border border-[#E8D1A7] space-y-3 animate-in fade-in duration-200">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#8C5800]">
+                    <Calendar className="w-4 h-4 text-[#8C5800]" />
+                    <span>Configuração do Uso Não Crônico</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#8C5800] mb-1">
+                        Número de Doses Diárias *
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="12"
+                        required={!isChronic}
+                        value={dosesPerDay}
+                        onChange={(e) => {
+                          const val = Math.max(1, Number(e.target.value));
+                          setDosesPerDay(val);
+                          if (val === 1) setScheduledTimesStr('08:00');
+                          else if (val === 2) setScheduledTimesStr('08:00, 20:00');
+                          else if (val === 3) setScheduledTimesStr('08:00, 14:00, 20:00');
+                          else if (val === 4) setScheduledTimesStr('08:00, 12:00, 16:00, 20:00');
+                        }}
+                        className="w-full px-3 py-2 rounded-xl border border-[#E8D1A7] bg-white text-xs text-[#103557] font-bold focus:outline-hidden focus:border-[#8C5800]"
+                        placeholder="Ex: 2"
+                      />
+                      <span className="text-[10px] text-[#8C5800]/80 mt-0.5 block">
+                        {dosesPerDay} {dosesPerDay === 1 ? 'tomada' : 'tomadas'} por dia
+                      </span>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#8C5800] mb-1">
+                        Período de Utilização (dias) *
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="365"
+                        required={!isChronic}
+                        value={durationDays}
+                        onChange={(e) => setDurationDays(Math.max(1, Number(e.target.value)))}
+                        className="w-full px-3 py-2 rounded-xl border border-[#E8D1A7] bg-white text-xs text-[#103557] font-bold focus:outline-hidden focus:border-[#8C5800]"
+                        placeholder="Ex: 7"
+                      />
+                      <span className="text-[10px] text-[#8C5800]/80 mt-0.5 block">
+                        Duração de {durationDays} dias
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#8C5800] mb-1">
+                      Data de Início
+                    </label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-[#E8D1A7] bg-white text-xs text-[#103557] font-medium focus:outline-hidden focus:border-[#8C5800]"
+                    />
+                    <div className="flex items-center justify-between text-[10px] text-[#8C5800] font-medium mt-1">
+                      <span>Início: {new Date(startDate + 'T00:00:00').toLocaleDateString('pt-BR')}</span>
+                      <span>Término previsto: {calculateEndDateStr(startDate, durationDays)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-[#103557] mb-1">

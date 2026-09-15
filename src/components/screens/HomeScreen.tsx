@@ -2,7 +2,9 @@ import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { setActiveTab, setAddPainLogOpen, setQuickSosOpen, setAddMedicationOpen, showToast } from '../../store/slices/uiSlice';
 import { toggleIntakeStatus } from '../../store/slices/medicationSlice';
+import { togglePhysioExecutionStatus } from '../../store/slices/exerciseSlice';
 import { PainService } from '../../services/painService';
+import { PhysiotherapyService } from '../../services/activityService';
 import {
   HeartPulse,
   Pill,
@@ -24,10 +26,13 @@ export const HomeScreen: React.FC = () => {
   const todayIntakes = useAppSelector((state) => state.medications.todayIntakes);
   const sleepLogs = useAppSelector((state) => state.sleep.logs);
   const exerciseLogs = useAppSelector((state) => state.exercise.logs);
+  const todayExecutions = useAppSelector((state) => state.exercise.todayExecutions || []);
 
   const latestPain = painLogs[0];
   const todaySleep = sleepLogs[0];
   const todayExercise = exerciseLogs[0];
+  const pendingPhysioCount = todayExecutions.filter((e) => e.status === 'pending').length;
+  const completedPhysioCount = todayExecutions.filter((e) => e.status === 'completed').length;
 
   const severityCat = latestPain ? PainService.getSeverityCategory(latestPain.painLevel) : 'mild';
   const severityColor = PainService.getSeverityColor(severityCat);
@@ -50,6 +55,16 @@ export const HomeScreen: React.FC = () => {
   const handleToggleMed = (intakeId: string, medName: string) => {
     dispatch(toggleIntakeStatus({ id: intakeId }));
     dispatch(showToast({ message: `Status de ${medName} atualizado com sucesso!` }));
+  };
+
+  const handleTogglePhysio = async (execId: string, title: string, currentStatus: 'completed' | 'pending') => {
+    dispatch(togglePhysioExecutionStatus({ id: execId }));
+    await PhysiotherapyService.toggleExecution(user?.uid || 'user-anon', execId);
+    if (currentStatus === 'pending') {
+      dispatch(showToast({ message: `Sessão de "${title}" realizada! Muito bem!` }));
+    } else {
+      dispatch(showToast({ message: `Sessão de "${title}" remarcada como a fazer.` }));
+    }
   };
 
   return (
@@ -212,6 +227,107 @@ export const HomeScreen: React.FC = () => {
         </div>
       </div>
 
+      {/* Physiotherapy & Rehabilitation Activities Timeline Card (A Fazer / Feito) */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#DCE3E8] elevation-1">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-[#E2F0FD] flex items-center justify-center text-[#2B4C6F]">
+              <Activity className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-[#103557]">Fisioterapia & Reabilitação de Hoje</h3>
+              <p className="text-[11px] text-[#53606B]">Toque no círculo para confirmar a sessão realizada</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            id="btn-manage-physio-home"
+            onClick={() => dispatch(setActiveTab('atividades'))}
+            className="text-xs font-bold text-[#2B4C6F] hover:text-[#103557] flex items-center gap-0.5"
+          >
+            <span>Gerenciar</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {todayExecutions.length === 0 ? (
+          <div className="text-center py-5 px-3 bg-[#F6F8FA] rounded-xl border border-dashed border-[#DCE3E8] space-y-1.5">
+            <p className="text-xs font-semibold text-[#53606B]">Nenhuma atividade de fisioterapia programada para hoje</p>
+            <p className="text-[11px] text-[#73777F]">Cadastre seu protocolo para acompanhar as sessões diárias.</p>
+            <button
+              type="button"
+              id="btn-goto-physio-from-home"
+              onClick={() => dispatch(setActiveTab('atividades'))}
+              className="mt-1 text-xs font-bold text-[#2B4C6F] hover:underline inline-flex items-center gap-1"
+            >
+              <span>Ver protocolos de Fisioterapia</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {todayExecutions.map((exec) => {
+              const isDone = exec.status === 'completed';
+              return (
+                <div
+                  key={exec.id}
+                  className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                    isDone
+                      ? 'bg-[#E2F0FD]/40 border-[#B7E7F7]'
+                      : 'bg-[#F6F8FA] border-[#DCE3E8] hover:border-[#2B4C6F]'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <button
+                      type="button"
+                      id={`btn-home-physio-${exec.id}`}
+                      onClick={() => handleTogglePhysio(exec.id, exec.prescriptionTitle, exec.status)}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center transition-all border shrink-0 ${
+                        isDone
+                          ? 'bg-[#68A691] border-[#68A691] text-white shadow-xs'
+                          : 'bg-white border-[#DCE3E8] text-transparent hover:border-[#68A691]'
+                      }`}
+                      title={isDone ? 'Marcar como a fazer' : 'Marcar como feito'}
+                      aria-label={`Marcar ${exec.prescriptionTitle} (${exec.sessionNumber}ª execução) como ${isDone ? 'a fazer' : 'feito'}`}
+                    >
+                      <Check className="w-4 h-4 stroke-[3]" />
+                    </button>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`text-xs font-bold truncate ${isDone ? 'line-through text-[#73777F]' : 'text-[#103557]'}`}>
+                          {exec.prescriptionTitle}
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-white text-[#53606B] font-medium border border-[#DCE3E8] shrink-0">
+                          {exec.sessionNumber}ª execução
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] text-[#73777F] mt-0.5 flex-wrap">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> Horário: {exec.scheduledTime}
+                        </span>
+                        {exec.completedAt && (
+                          <span className="text-[#00875A] font-medium">
+                            • Feito às {new Date(exec.completedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                      isDone ? 'bg-[#AFF0D8] text-[#003B2E]' : 'bg-[#EEF2F5] text-[#53606B]'
+                    }`}
+                  >
+                    {isDone ? 'Feito' : 'A Fazer'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       {/* Grid: Sono & Atividade Restaurativa */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Sleep Card */}
@@ -244,15 +360,33 @@ export const HomeScreen: React.FC = () => {
             <span className="text-xs font-bold text-[#103557] flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-[#356572]" /> Movimento / Fisio
             </span>
-            <span className="text-[10px] font-bold text-[#2B4C6F] bg-[#E2F0FD] px-2 py-0.5 rounded-full capitalize">
-              {todayExercise ? todayExercise.painImpact : 'Sem registros'}
-            </span>
+            {pendingPhysioCount > 0 ? (
+              <span className="text-[10px] font-bold text-[#93000A] bg-[#FFDAD6] px-2 py-0.5 rounded-full">
+                Faltam {pendingPhysioCount}
+              </span>
+            ) : todayExecutions.length > 0 ? (
+              <span className="text-[10px] font-bold text-[#003B2E] bg-[#AFF0D8] px-2 py-0.5 rounded-full">
+                Fisio em dia ✓
+              </span>
+            ) : (
+              <span className="text-[10px] font-bold text-[#2B4C6F] bg-[#E2F0FD] px-2 py-0.5 rounded-full capitalize">
+                {todayExercise ? todayExercise.painImpact : 'Sem registros'}
+              </span>
+            )}
           </div>
           <div className="text-2xl font-extrabold text-[#103557] tabular-nums">
-            {todayExercise ? `${todayExercise.durationMinutes} min` : '--'}
+            {todayExecutions.length > 0
+              ? `${completedPhysioCount}/${todayExecutions.length}`
+              : todayExercise
+              ? `${todayExercise.durationMinutes} min`
+              : '--'}
           </div>
           <p className="text-[11px] text-[#53606B] mt-1 capitalize line-clamp-1">
-            {todayExercise ? `${todayExercise.activityType} • ${todayExercise.intensity}` : 'Toque para registrar sua atividade.'}
+            {todayExecutions.length > 0
+              ? `${completedPhysioCount} de ${todayExecutions.length} sessões de fisioterapia concluídas hoje`
+              : todayExercise
+              ? `${todayExercise.activityType} • ${todayExercise.intensity}`
+              : 'Toque para acompanhar suas sessões de fisioterapia.'}
           </p>
         </div>
       </div>

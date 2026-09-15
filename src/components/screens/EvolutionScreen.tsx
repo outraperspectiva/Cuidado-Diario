@@ -2,18 +2,30 @@ import React, { useState } from 'react';
 import { useAppSelector } from '../../store';
 import { AnalyticsService } from '../../services/analyticsService';
 import { PainService } from '../../services/painService';
-import { TrendingUp, TrendingDown, Minus, Download, FileText, Calendar, AlertTriangle, Moon, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { PhysioAdherenceChart } from '../evolution/PhysioAdherenceChart';
+import { TrendingUp, TrendingDown, Minus, Download, FileText, Calendar, AlertTriangle, Moon, CheckCircle2, ShieldCheck, Activity } from 'lucide-react';
 
 export const EvolutionScreen: React.FC = () => {
   const painLogs = useAppSelector((state) => state.pain.logs);
   const sleepLogs = useAppSelector((state) => state.sleep.logs);
   const exerciseLogs = useAppSelector((state) => state.exercise.logs);
   const todayIntakes = useAppSelector((state) => state.medications.todayIntakes);
+  const todayExecutions = useAppSelector((state) => state.exercise.todayExecutions || []);
+  const historyExecutions = useAppSelector((state) => state.exercise.historyExecutions || []);
+  const prescriptions = useAppSelector((state) => state.exercise.prescriptions || []);
   const user = useAppSelector((state) => state.auth.user);
 
   const [copiedReport, setCopiedReport] = useState(false);
 
-  const summary = AnalyticsService.computeSummary(painLogs, sleepLogs, exerciseLogs, todayIntakes);
+  const summary = AnalyticsService.computeSummary(
+    painLogs,
+    sleepLogs,
+    exerciseLogs,
+    todayIntakes,
+    todayExecutions,
+    historyExecutions,
+    prescriptions
+  );
 
   // Reverse pain logs chronologically for the trend graph
   const chronologicalPain = [...painLogs].reverse().slice(-7);
@@ -40,6 +52,7 @@ Data de Emissão: ${new Date().toLocaleDateString('pt-BR')}
 
 3. ATIVIDADE E REABILITAÇÃO
 - Total de Exercícios/Fisioterapia: ${summary.exerciseMinutesTotal} minutos
+- Adesão à Fisioterapia/Reabilitação Prescrita: ${summary.physioAdherencePercent}%
 
 4. ADESÃO FARMACOLÓGICA
 - Taxa de Adesão aos Medicamentos: ${summary.medicationAdherencePercent}%
@@ -73,7 +86,7 @@ Gerado via Cuidado Diário - Acompanhamento de Saúde e Dor
       </div>
 
       {/* KPI Overview Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
         <div className="bg-white rounded-2xl p-3.5 border border-[#DCE3E8] elevation-1">
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#53606B]">
             Média da Dor
@@ -127,7 +140,20 @@ Gerado via Cuidado Diário - Acompanhamento de Saúde e Dor
           </div>
           <span className="text-[11px] text-[#356572] font-semibold mt-1 block">Conformidade alta</span>
         </div>
+
+        <div className="bg-white rounded-2xl p-3.5 border border-[#DCE3E8] elevation-1 col-span-2 sm:col-span-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#53606B]">
+            Adesão Fisio
+          </span>
+          <div className="text-2xl font-extrabold text-[#00875A] tabular-nums mt-0.5">
+            {summary.physioAdherencePercent}%
+          </div>
+          <span className="text-[11px] text-[#00875A] font-semibold mt-1 block">Reabilitação ativa</span>
+        </div>
       </div>
+
+      {/* Physiotherapy & Rehabilitation Adherence Chart */}
+      <PhysioAdherenceChart />
 
       {/* Visual Pain Trend Chart (Clean pure SVG visualizer adhering to Anti-Slop principles) */}
       <div className="bg-white rounded-2xl p-5 border border-[#DCE3E8] elevation-1">

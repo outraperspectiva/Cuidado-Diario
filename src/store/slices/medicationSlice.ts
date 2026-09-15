@@ -20,6 +20,7 @@ export const initialMedications: Medication[] = [
     scheduledTimes: ['08:00', '20:00'],
     instructions: 'Tomar com água após o café e antes de dormir.',
     isActive: true,
+    isChronic: true,
     prescribedBy: 'Dra. Helena Martins (Neurologista)',
     createdAt: '2026-01-15T08:00:00.000Z'
   },
@@ -32,6 +33,7 @@ export const initialMedications: Medication[] = [
     scheduledTimes: ['09:00'],
     instructions: 'Tomar pela manhã com alimento.',
     isActive: true,
+    isChronic: true,
     prescribedBy: 'Dr. Lucas Ribeiro (Reumatologista)',
     createdAt: '2026-02-01T09:00:00.000Z'
   },
@@ -44,6 +46,11 @@ export const initialMedications: Medication[] = [
     scheduledTimes: ['22:00'],
     instructions: 'Uso em caso de contratura muscular noturna acentuada.',
     isActive: true,
+    isChronic: false,
+    dosesPerDay: 1,
+    durationDays: 10,
+    startDate: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0],
+    endDate: new Date(Date.now() + 86400000 * 7).toISOString().split('T')[0],
     prescribedBy: 'Dra. Helena Martins',
     createdAt: '2026-02-10T11:00:00.000Z'
   },
@@ -56,6 +63,7 @@ export const initialMedications: Medication[] = [
     scheduledTimes: ['21:30'],
     instructions: 'Suplementação noturna para relaxamento muscular e sono.',
     isActive: true,
+    isChronic: true,
     createdAt: '2026-01-20T10:00:00.000Z'
   }
 ];
@@ -128,19 +136,23 @@ export const medicationSlice = createSlice({
   reducers: {
     addMedication: (state, action: PayloadAction<Medication>) => {
       state.medications.push(action.payload);
-      // Generate intake slots for today if active
-      action.payload.scheduledTimes.forEach(time => {
-        state.todayIntakes.push({
-          id: `intake-${Date.now()}-${time}`,
-          userId: action.payload.userId,
-          medicationId: action.payload.id,
-          medicationName: action.payload.name,
-          dosage: action.payload.dosage,
-          scheduledTime: time,
-          status: 'pending',
-          date: todayStr
+      // Generate intake slots for today if active and within validity period
+      const med = action.payload;
+      const isWithinPeriod = !med.endDate || (todayStr >= (med.startDate || todayStr) && todayStr <= med.endDate);
+      if (med.isActive && isWithinPeriod) {
+        action.payload.scheduledTimes.forEach(time => {
+          state.todayIntakes.push({
+            id: `intake-${Date.now()}-${time}`,
+            userId: action.payload.userId,
+            medicationId: action.payload.id,
+            medicationName: action.payload.name,
+            dosage: action.payload.dosage,
+            scheduledTime: time,
+            status: 'pending',
+            date: todayStr
+          });
         });
-      });
+      }
     },
     updateMedication: (state, action: PayloadAction<Medication>) => {
       const idx = state.medications.findIndex(m => m.id === action.payload.id);

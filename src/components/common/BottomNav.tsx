@@ -15,14 +15,16 @@ export const BottomNav: React.FC = () => {
   const dispatch = useAppDispatch();
   const activeTab = useAppSelector((state) => state.ui.activeTab);
   const todayIntakes = useAppSelector((state) => state.medications.todayIntakes);
+  const todayExecutions = useAppSelector((state) => state.exercise.todayExecutions || []);
 
   const pendingMedsCount = todayIntakes.filter(i => i.status === 'pending').length;
+  const pendingPhysioCount = todayExecutions.filter(e => e.status === 'pending').length;
 
   const navItems: NavItem[] = [
     { id: 'hoje', label: 'Hoje', icon: Home },
     { id: 'dor', label: 'Dor & Sintomas', icon: HeartPulse },
     { id: 'medicamentos', label: 'Medicamentos', icon: Pill, badge: pendingMedsCount },
-    { id: 'atividades', label: 'Físio & Sono', icon: ActivityTabIcon },
+    { id: 'atividades', label: 'Físio & Sono', icon: ActivityTabIcon, badge: pendingPhysioCount },
     { id: 'evolucao', label: 'Evolução', icon: TrendingUp },
   ];
 
