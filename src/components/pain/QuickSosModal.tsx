@@ -2,24 +2,35 @@ import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { setQuickSosOpen, showToast } from '../../store/slices/uiSlice';
 import { addPainLog } from '../../store/slices/painSlice';
+import { addAppointment } from '../../store/slices/appointmentSlice';
 import { PainService } from '../../services/painService';
+import { AppointmentService } from '../../services/appointmentService';
 import { BodyPart, PainLevel } from '../../types';
-import { AlertCircle, X, Check, Phone, ShieldAlert } from 'lucide-react';
+import { AlertCircle, X, Check, Phone, ShieldAlert, Calendar, Clock, Video, MapPin, Stethoscope } from 'lucide-react';
 
 export const QuickSosModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const isOpen = useAppSelector((state) => state.ui.isQuickSosOpen);
   const user = useAppSelector((state) => state.auth.user);
 
+  const tomorrowStr = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+
   const [painLvl, setPainLvl] = useState<PainLevel>(8);
   const [selectedZone, setSelectedZone] = useState<BodyPart>('lombar');
   const [tookRescueMed, setTookRescueMed] = useState<boolean>(true);
   const [notes, setNotes] = useState<string>('Crise aguda de dor iniciada repentinamente.');
 
+  // Option to schedule consultation
+  const [scheduleConsultation, setScheduleConsultation] = useState<boolean>(false);
+  const [consultationDoctor, setConsultationDoctor] = useState<string>('Dr. Roberto Silva (Neurologista / Dor)');
+  const [consultationDate, setConsultationDate] = useState<string>(tomorrowStr);
+  const [consultationTime, setConsultationTime] = useState<string>('14:00');
+  const [consultationType, setConsultationType] = useState<'presencial' | 'telemedicina'>('presencial');
+
   if (!isOpen) return null;
 
   const handleSaveSos = async () => {
-    const newLog = await PainService.createLog(user?.uid || 'user-anon', {
+    const newLog = await PainService.createLog(user?.uid || 'melhora-user-7841', {
       timestamp: new Date().toISOString(),
       painLevel: painLvl,
       severityCategory: PainService.getSeverityCategory(painLvl),
@@ -32,8 +43,43 @@ export const QuickSosModal: React.FC = () => {
     });
 
     dispatch(addPainLog(newLog));
+
+    // Handle consultation scheduling if option selected
+    if (scheduleConsultation) {
+      try {
+        const docName = consultationDoctor.split(' (')[0];
+        const spec = consultationDoctor.includes('(')
+          ? consultationDoctor.split(' (')[1].replace(')', '')
+          : 'Especialista em Dor';
+
+        const newApp = await AppointmentService.createAppointment(user?.uid || 'melhora-user-7841', {
+          doctorName: docName,
+          specialty: spec,
+          date: consultationDate,
+          time: consultationTime,
+          locationType: consultationType,
+          clinicOrHospital: consultationType === 'presencial' ? 'Clínica Integrada de Dor & Neuro' : 'Plataforma ConectaSaúde (Teleconsulta)',
+          reason: `Avaliação pós-crise aguda de dor (EVA ${painLvl}/10 em ${selectedZone})`,
+          status: 'agendada',
+          isUrgent: true,
+          notes: `Agendado via Registro Rápido de Crise (SOS). Relato: ${notes}`
+        });
+
+        dispatch(addAppointment(newApp));
+      } catch (err) {
+        console.error('Erro ao agendar consulta no SOS:', err);
+      }
+    }
+
     dispatch(setQuickSosOpen(false));
-    dispatch(showToast({ message: 'Crise registrada! Respire com calma e siga o plano de alívio.', type: 'warning' }));
+    dispatch(
+      showToast({
+        message: scheduleConsultation
+          ? 'Crise registrada e consulta com especialista agendada com sucesso!'
+          : 'Crise registrada! Respire com calma e siga o plano de alívio.',
+        type: 'warning'
+      })
+    );
   };
 
   return (
@@ -124,6 +170,98 @@ export const QuickSosModal: React.FC = () => {
               <span className="text-[11px] text-[#53606B]">Registra dose extra no histórico farmacológico</span>
             </div>
           </label>
+
+          {/* Option to Schedule Consultation (Opção de Marcar Consulta no SOS) */}
+          <div className="p-3.5 rounded-2xl bg-[#E2F0FD]/60 border border-[#B7E7F7] space-y-2.5">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={scheduleConsultation}
+                onChange={(e) => setScheduleConsultation(e.target.checked)}
+                className="w-4 h-4 rounded text-[#103557] focus:ring-[#103557] mt-0.5"
+              />
+              <div className="text-xs">
+                <span className="font-bold text-[#103557] flex items-center gap-1.5">
+                  <Stethoscope className="w-3.5 h-3.5 text-[#2B4C6F]" />
+                  <span>Marcar consulta médica / retorno após esta crise</span>
+                </span>
+                <span className="text-[11px] text-[#53606B] block mt-0.5">
+                  Garante acompanhamento clínico com seu especialista para avaliar a dor
+                </span>
+              </div>
+            </label>
+
+            {scheduleConsultation && (
+              <div className="mt-2 pt-2.5 border-t border-[#B7E7F7] space-y-2.5 animate-in fade-in duration-150">
+                <div>
+                  <label className="block text-[11px] font-bold text-[#103557] mb-1 uppercase tracking-wider">
+                    Especialista / Médico(a)
+                  </label>
+                  <select
+                    value={consultationDoctor}
+                    onChange={(e) => setConsultationDoctor(e.target.value)}
+                    className="w-full px-2.5 py-1.5 text-xs border border-[#DCE3E8] rounded-xl bg-white focus:outline-none focus:border-[#103557]"
+                  >
+                    <option value="Dr. Roberto Silva (Neurologista / Dor)">Dr. Roberto Silva (Neurologista / Dor)</option>
+                    <option value="Dra. Patrícia Lima (Fisiatria & Reabilitação)">Dra. Patrícia Lima (Fisiatria & Reabilitação)</option>
+                    <option value="Clínica Geral de Dor">Clínico Geral / Plantão de Dor</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#103557] mb-1 uppercase tracking-wider">
+                      Data Sugerida
+                    </label>
+                    <input
+                      type="date"
+                      value={consultationDate}
+                      onChange={(e) => setConsultationDate(e.target.value)}
+                      className="w-full px-2 py-1.5 text-xs border border-[#DCE3E8] rounded-xl bg-white focus:outline-none focus:border-[#103557]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#103557] mb-1 uppercase tracking-wider">
+                      Horário
+                    </label>
+                    <input
+                      type="time"
+                      value={consultationTime}
+                      onChange={(e) => setConsultationTime(e.target.value)}
+                      className="w-full px-2 py-1.5 text-xs border border-[#DCE3E8] rounded-xl bg-white focus:outline-none focus:border-[#103557]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setConsultationType('presencial')}
+                    className={`flex-1 py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all flex items-center justify-center gap-1 ${
+                      consultationType === 'presencial'
+                        ? 'bg-[#103557] text-white border-[#103557]'
+                        : 'bg-white text-[#53606B] border-[#DCE3E8]'
+                    }`}
+                  >
+                    <MapPin className="w-3 h-3" />
+                    <span>Presencial</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConsultationType('telemedicina')}
+                    className={`flex-1 py-1.5 px-2 rounded-lg text-[11px] font-bold border transition-all flex items-center justify-center gap-1 ${
+                      consultationType === 'telemedicina'
+                        ? 'bg-[#103557] text-white border-[#103557]'
+                        : 'bg-white text-[#53606B] border-[#DCE3E8]'
+                    }`}
+                  >
+                    <Video className="w-3 h-3" />
+                    <span>Telemedicina</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Emergency Contact Quick Call */}
           {user?.emergencyContact && (

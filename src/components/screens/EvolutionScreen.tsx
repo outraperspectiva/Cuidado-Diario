@@ -3,6 +3,7 @@ import { useAppSelector } from '../../store';
 import { AnalyticsService } from '../../services/analyticsService';
 import { PainService } from '../../services/painService';
 import { PhysioAdherenceChart } from '../evolution/PhysioAdherenceChart';
+import { AppointmentsAgendaSection } from '../evolution/AppointmentsAgendaSection';
 import { TrendingUp, TrendingDown, Minus, Download, FileText, Calendar, AlertTriangle, Moon, CheckCircle2, ShieldCheck, Activity } from 'lucide-react';
 
 export const EvolutionScreen: React.FC = () => {
@@ -13,6 +14,7 @@ export const EvolutionScreen: React.FC = () => {
   const todayExecutions = useAppSelector((state) => state.exercise.todayExecutions || []);
   const historyExecutions = useAppSelector((state) => state.exercise.historyExecutions || []);
   const prescriptions = useAppSelector((state) => state.exercise.prescriptions || []);
+  const appointments = useAppSelector((state) => state.appointments?.appointments || []);
   const user = useAppSelector((state) => state.auth.user);
 
   const [copiedReport, setCopiedReport] = useState(false);
@@ -31,6 +33,19 @@ export const EvolutionScreen: React.FC = () => {
   const chronologicalPain = [...painLogs].reverse().slice(-7);
 
   const handleExportReport = () => {
+    const upcomingApps = appointments.filter((a) => a.status === 'agendada');
+    const appointmentsText =
+      upcomingApps.length > 0
+        ? upcomingApps
+            .map(
+              (a) =>
+                `- ${a.date.split('-').reverse().join('/')} às ${a.time}: ${a.doctorName} (${a.specialty}) [${a.locationType}]${
+                  a.reason ? ` - ${a.reason}` : ''
+                }`
+            )
+            .join('\n')
+        : '- Nenhuma consulta agendada no momento';
+
     const reportText = `
 ========================================
 MELHORA - RELATÓRIO DE SAÚDE E DOR
@@ -56,6 +71,9 @@ Data de Emissão: ${new Date().toLocaleDateString('pt-BR')}
 
 4. ADESÃO FARMACOLÓGICA
 - Taxa de Adesão aos Medicamentos: ${summary.medicationAdherencePercent}%
+
+5. AGENDA DE CONSULTAS MÉDICAS
+${appointmentsText}
 
 ========================================
 Gerado via Cuidado Diário - Acompanhamento de Saúde e Dor
@@ -256,6 +274,9 @@ Gerado via Cuidado Diário - Acompanhamento de Saúde e Dor
           <p className="text-xs text-[#73777F] italic text-center py-6">Registros insuficientes para curva temporal.</p>
         )}
       </div>
+
+      {/* Agenda de Consultas Marcadas */}
+      <AppointmentsAgendaSection />
 
       {/* Two columns: Gatilhos & Regiões mais afetadas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

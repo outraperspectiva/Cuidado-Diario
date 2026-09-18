@@ -207,3 +207,19 @@ export interface PhysioPeriodSummary {
   totalExerciseMinutes: number;
   adherenceRating: 'excelente' | 'boa' | 'moderada' | 'baixa';
 }
+
+export interface MedicalAppointment {
+  id: string;
+  userId: string;
+  doctorName: string;
+  specialty: string;
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm
+  locationType: 'presencial' | 'telemedicina';
+  clinicOrHospital?: string;
+  reason?: string;
+  status: 'agendada' | 'realizada' | 'cancelada';
+  isUrgent?: boolean;
+  notes?: string;
+  createdAt: string;
+}

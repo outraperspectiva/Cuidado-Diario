@@ -1,6 +1,15 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { setActiveTab, setAddPainLogOpen, setQuickSosOpen, setAddMedicationOpen, showToast } from '../../store/slices/uiSlice';
+import {
+  setActiveTab,
+  setAddPainLogOpen,
+  setQuickSosOpen,
+  setAddMedicationOpen,
+  setAddExerciseOpen,
+  setQuickIntakeModalOpen,
+  setAppointmentsModalOpen,
+  showToast
+} from '../../store/slices/uiSlice';
 import { toggleIntakeStatus } from '../../store/slices/medicationSlice';
 import { togglePhysioExecutionStatus } from '../../store/slices/exerciseSlice';
 import { PainService } from '../../services/painService';
@@ -16,7 +25,8 @@ import {
   AlertCircle,
   Activity,
   Calendar,
-  Clock
+  Clock,
+  Stethoscope
 } from 'lucide-react';
 
 export const HomeScreen: React.FC = () => {
@@ -27,12 +37,20 @@ export const HomeScreen: React.FC = () => {
   const sleepLogs = useAppSelector((state) => state.sleep.logs);
   const exerciseLogs = useAppSelector((state) => state.exercise.logs);
   const todayExecutions = useAppSelector((state) => state.exercise.todayExecutions || []);
+  const appointments = useAppSelector((state) => state.appointments?.appointments || []);
 
   const latestPain = painLogs[0];
   const todaySleep = sleepLogs[0];
   const todayExercise = exerciseLogs[0];
   const pendingPhysioCount = todayExecutions.filter((e) => e.status === 'pending').length;
   const completedPhysioCount = todayExecutions.filter((e) => e.status === 'completed').length;
+  const totalPhysioCount = todayExecutions.length;
+
+  const takenMedsCount = todayIntakes.filter((i) => i.status === 'taken').length;
+  const totalMedsCount = todayIntakes.length;
+
+  const upcomingAppointments = appointments.filter((a) => a.status === 'agendada');
+  const nextAppointment = upcomingAppointments[0];
 
   const severityCat = latestPain ? PainService.getSeverityCategory(latestPain.painLevel) : 'mild';
   const severityColor = PainService.getSeverityColor(severityCat);
@@ -69,40 +87,129 @@ export const HomeScreen: React.FC = () => {
 
   return (
     <div className="space-y-4 pb-6">
-      {/* Date & Welcoming Context */}
-      <div className="bg-gradient-to-r from-[#103557] to-[#2B4C6F] rounded-3xl p-5 text-white shadow-sm">
-        <div className="flex items-center gap-1.5 text-xs text-[#88C6B0] font-semibold capitalize mb-1">
-          <Calendar className="w-3.5 h-3.5" />
-          <span>{todayDateFormatted}</span>
-        </div>
-        <h2 className="text-xl font-bold tracking-tight">
-          Como você está se sentindo agora, {patientDisplayName}?
-        </h2>
-        <p className="text-xs text-[#E2F0FD]/80 mt-1 leading-relaxed">
-          Seu espaço seguro para registrar cada detalhe e acompanhar seu progresso sem sobrecarga.
-        </p>
+      {/* Quick Access Card (Card de Registro Rápido) */}
+      <div className="bg-gradient-to-r from-[#103557] to-[#2B4C6F] rounded-3xl p-4 sm:p-5 text-white shadow-sm space-y-3.5">
+        {/* Date & Pain/SOS Quick Actions Header */}
+        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-white/15">
+          <div className="flex items-center gap-1.5 text-xs text-[#88C6B0] font-semibold capitalize">
+            <Calendar className="w-3.5 h-3.5" />
+            <span>{todayDateFormatted}</span>
+          </div>
 
-        {/* Quick Action Pills inside banner */}
-        <div className="flex flex-wrap items-center gap-2.5 mt-4 pt-3 border-t border-white/15">
-          <button
-            id="btn-register-pain-home"
-            type="button"
-            onClick={() => dispatch(setAddPainLogOpen(true))}
-            className="flex items-center gap-1.5 bg-white text-[#103557] px-4 py-2 rounded-full text-xs font-bold hover:bg-[#E2F0FD] transition-all active:scale-95 shadow-xs"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Registrar Dor</span>
-          </button>
-          <button
-            id="btn-sos-crise-feeling-card"
-            type="button"
-            onClick={() => dispatch(setQuickSosOpen(true))}
-            className="flex items-center gap-1.5 bg-[#D96B5B] hover:bg-[#B34045] text-white px-3.5 py-2 rounded-full text-xs font-bold transition-all active:scale-95 shadow-xs border border-white/20"
-            title="Registrar Crise de Dor Imediata (SOS)"
-          >
-            <AlertCircle className="w-3.5 h-3.5 fill-white/20" />
-            <span>SOS Crise</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              id="btn-register-pain-home"
+              type="button"
+              onClick={() => dispatch(setAddPainLogOpen(true))}
+              className="flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 border border-white/10"
+            >
+              <Plus className="w-3 h-3" />
+              <span>Registrar Dor</span>
+            </button>
+            <button
+              id="btn-sos-crise-feeling-card"
+              type="button"
+              onClick={() => dispatch(setQuickSosOpen(true))}
+              className="flex items-center gap-1 bg-[#D96B5B] hover:bg-[#B34045] text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 shadow-xs border border-white/20"
+              title="Registrar Crise de Dor Imediata (SOS)"
+            >
+              <AlertCircle className="w-3 h-3 fill-white/20" />
+              <span>SOS Crise</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 3 Botões de Acesso Rápido para Registrar: Medicamentos, Fisioterapia, Consultas */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {/* a) Medicamentos */}
+            <button
+              id="btn-quick-meds-home"
+              type="button"
+              onClick={() => dispatch(setQuickIntakeModalOpen(true))}
+              className="w-full text-left bg-white text-[#101D26] p-3 sm:p-3.5 rounded-2xl shadow-xs hover:bg-[#F6F8FA] transition-all active:scale-[0.99] border border-white/20 flex flex-col justify-between group cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="w-8 h-8 rounded-xl bg-[#E2F0FD] text-[#2B4C6F] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Pill className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#E2F0FD] text-[#103557]">
+                    {takenMedsCount}/{totalMedsCount} tomados
+                  </span>
+                </div>
+                <h4 className="text-xs font-bold text-[#103557]">Medicamentos</h4>
+                <p className="text-[11px] text-[#53606B] mt-0.5 leading-snug">
+                  Dosagem certa, via certa, no horário certo
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-[#EEF2F5] flex items-center justify-between text-[11px] font-bold text-[#2B4C6F]">
+                <span>Registrar doses</span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#73777F] group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </button>
+
+            {/* b) Fisioterapia */}
+            <button
+              id="btn-quick-physio-home"
+              type="button"
+              onClick={() => {
+                dispatch(setActiveTab('atividades'));
+                dispatch(setAddExerciseOpen(true));
+              }}
+              className="w-full text-left bg-white text-[#101D26] p-3 sm:p-3.5 rounded-2xl shadow-xs hover:bg-[#F6F8FA] transition-all active:scale-[0.99] border border-white/20 flex flex-col justify-between group cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="w-8 h-8 rounded-xl bg-[#AFF0D8] text-[#003B2E] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Activity className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#AFF0D8] text-[#003B2E]">
+                    {completedPhysioCount}/{totalPhysioCount} feitas
+                  </span>
+                </div>
+                <h4 className="text-xs font-bold text-[#103557]">Fisioterapia</h4>
+                <p className="text-[11px] text-[#53606B] mt-0.5 leading-snug">
+                  Adesão às Atividades de Fisioterapia Hoje
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-[#EEF2F5] flex items-center justify-between text-[11px] font-bold text-[#00875A]">
+                <span>Registrar atividades</span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#73777F] group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </button>
+
+            {/* c) Consultas */}
+            <button
+              id="btn-quick-appointments-home"
+              type="button"
+              onClick={() => dispatch(setAppointmentsModalOpen(true))}
+              className="w-full text-left bg-white text-[#101D26] p-3 sm:p-3.5 rounded-2xl shadow-xs hover:bg-[#F6F8FA] transition-all active:scale-[0.99] border border-white/20 flex flex-col justify-between group cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="w-8 h-8 rounded-xl bg-[#E2F0FD] text-[#103557] flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Stethoscope className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#E2F0FD] text-[#103557]">
+                    {upcomingAppointments.length} agendada{upcomingAppointments.length === 1 ? '' : 's'}
+                  </span>
+                </div>
+                <h4 className="text-xs font-bold text-[#103557]">Consultas</h4>
+                <p className="text-[11px] text-[#53606B] mt-0.5 leading-snug">
+                  Próximas consultas agendadas e novos registros
+                </p>
+              </div>
+              <div className="mt-3 pt-2 border-t border-[#EEF2F5] flex items-center justify-between text-[11px] font-bold text-[#103557]">
+                <span>
+                  {nextAppointment
+                    ? `Próx: ${nextAppointment.date.split('-')[2]}/${nextAppointment.date.split('-')[1]}`
+                    : 'Marcar consulta'}
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#73777F] group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 

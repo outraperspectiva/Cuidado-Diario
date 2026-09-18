@@ -10,6 +10,9 @@ interface UiState {
   isAddPainLogOpen: boolean;
   isAddSleepOpen: boolean;
   isAddExerciseOpen: boolean;
+  isAddAppointmentOpen: boolean;
+  isAppointmentsModalOpen: boolean;
+  isQuickIntakeModalOpen: boolean;
   toastMessage: string | null;
   toastType: 'success' | 'info' | 'warning' | 'error';
 }
@@ -22,6 +25,9 @@ const initialState: UiState = {
   isAddPainLogOpen: false,
   isAddSleepOpen: false,
   isAddExerciseOpen: false,
+  isAddAppointmentOpen: false,
+  isAppointmentsModalOpen: false,
+  isQuickIntakeModalOpen: false,
   toastMessage: null,
   toastType: 'success',
 };
@@ -54,6 +60,15 @@ export const uiSlice = createSlice({
     setAddExerciseOpen: (state, action: PayloadAction<boolean>) => {
       state.isAddExerciseOpen = action.payload;
     },
+    setAddAppointmentOpen: (state, action: PayloadAction<boolean>) => {
+      state.isAddAppointmentOpen = action.payload;
+    },
+    setAppointmentsModalOpen: (state, action: PayloadAction<boolean>) => {
+      state.isAppointmentsModalOpen = action.payload;
+    },
+    setQuickIntakeModalOpen: (state, action: PayloadAction<boolean>) => {
+      state.isQuickIntakeModalOpen = action.payload;
+    },
     showToast: (state, action: PayloadAction<{ message: string; type?: UiState['toastType'] }>) => {
       state.toastMessage = action.payload.message;
       state.toastType = action.payload.type || 'success';
@@ -73,6 +88,9 @@ export const {
   setAddPainLogOpen,
   setAddSleepOpen,
   setAddExerciseOpen,
+  setAddAppointmentOpen,
+  setAppointmentsModalOpen,
+  setQuickIntakeModalOpen,
   showToast,
   hideToast
 } = uiSlice.actions;

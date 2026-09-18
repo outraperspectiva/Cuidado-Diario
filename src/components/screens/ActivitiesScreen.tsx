@@ -8,7 +8,7 @@ import {
   deletePhysioPrescription,
   togglePhysioExecutionStatus
 } from '../../store/slices/exerciseSlice';
-import { showToast } from '../../store/slices/uiSlice';
+import { showToast, setAddExerciseOpen, setAddSleepOpen } from '../../store/slices/uiSlice';
 import { SleepService, ExerciseService, PhysiotherapyService } from '../../services/activityService';
 import { formatExerciseDateTime, formatSleepDate } from '../../utils/dateUtils';
 import {
@@ -67,6 +67,8 @@ export const ActivitiesScreen: React.FC = () => {
   const physioPrescriptions = useAppSelector((state) => state.exercise.prescriptions || []);
   const todayExecutions = useAppSelector((state) => state.exercise.todayExecutions || []);
   const user = useAppSelector((state) => state.auth.user);
+  const isAddExerciseOpen = useAppSelector((state) => state.ui.isAddExerciseOpen);
+  const isAddSleepOpen = useAppSelector((state) => state.ui.isAddSleepOpen);
 
   const completedExecsCount = todayExecutions.filter((e) => e.status === 'completed').length;
   const pendingPhysioCount = todayExecutions.filter((e) => e.status === 'pending').length;
@@ -134,6 +136,23 @@ export const ActivitiesScreen: React.FC = () => {
   const [exerciseToDelete, setExerciseToDelete] = useState<ExerciseLog | null>(null);
   // Delete sleep state
   const [sleepToDelete, setSleepToDelete] = useState<SleepLog | null>(null);
+
+  React.useEffect(() => {
+    if (isAddExerciseOpen) {
+      setActiveTab('exercicio');
+      setActivityType('fisioterapia');
+      setIsExerciseModalOpen(true);
+      dispatch(setAddExerciseOpen(false));
+    }
+  }, [isAddExerciseOpen, dispatch]);
+
+  React.useEffect(() => {
+    if (isAddSleepOpen) {
+      setActiveTab('sono');
+      setIsSleepModalOpen(true);
+      dispatch(setAddSleepOpen(false));
+    }
+  }, [isAddSleepOpen, dispatch]);
 
   const handleTogglePhysioExecution = async (exec: PhysiotherapyExecution) => {
     dispatch(togglePhysioExecutionStatus({ id: exec.id }));

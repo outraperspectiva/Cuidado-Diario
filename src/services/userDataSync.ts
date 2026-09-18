@@ -1,10 +1,11 @@
 import { AppDispatch } from '../store';
-import { UserProfile, PainLog, Medication, MedicationIntake, SleepLog, ExerciseLog, PhysiotherapyPrescription, PhysiotherapyExecution } from '../types';
+import { UserProfile, PainLog, Medication, MedicationIntake, SleepLog, ExerciseLog, PhysiotherapyPrescription, PhysiotherapyExecution, MedicalAppointment } from '../types';
 import { LocalPersistenceRepository } from './firebaseConfig';
 import { setUserPainLogs, resetPainLogs, initialPainLogs } from '../store/slices/painSlice';
 import { setUserMedications, resetMedications, initialMedications, initialIntakes } from '../store/slices/medicationSlice';
 import { setUserExerciseData, resetExerciseLogs, initialExerciseLogs, initialPhysioPrescriptions, initialPhysioExecutions } from '../store/slices/exerciseSlice';
 import { setUserSleepLogs, resetSleepLogs, initialSleepLogs } from '../store/slices/sleepSlice';
+import { setUserAppointments, resetAppointments, initialAppointments } from '../store/slices/appointmentSlice';
 
 export class UserDataSync {
   /**
@@ -33,6 +34,7 @@ export class UserDataSync {
     const exerciseFallback: ExerciseLog[] = isDemoAccount ? initialExerciseLogs : [];
     const physioRxFallback: PhysiotherapyPrescription[] = isDemoAccount ? initialPhysioPrescriptions : [];
     const physioExecFallback: PhysiotherapyExecution[] = isDemoAccount ? initialPhysioExecutions : [];
+    const appointmentFallback: MedicalAppointment[] = isDemoAccount ? initialAppointments : [];
 
     const painLogs = LocalPersistenceRepository.get<PainLog>('pain_logs', user.uid, painFallback);
     const medications = LocalPersistenceRepository.get<Medication>('medications', user.uid, medFallback);
@@ -41,6 +43,7 @@ export class UserDataSync {
     const exerciseLogs = LocalPersistenceRepository.get<ExerciseLog>('exercise_logs', user.uid, exerciseFallback);
     const physioPrescriptions = LocalPersistenceRepository.get<PhysiotherapyPrescription>('physio_prescriptions', user.uid, physioRxFallback);
     const physioExecutions = LocalPersistenceRepository.get<PhysiotherapyExecution>('physio_executions', user.uid, physioExecFallback);
+    const appointments = LocalPersistenceRepository.get<MedicalAppointment>('appointments', user.uid, appointmentFallback);
 
     const todayDateStr = new Date().toISOString().split('T')[0];
     const todayOnlyExecs = physioExecutions.filter(e => e.date === todayDateStr);
@@ -54,6 +57,7 @@ export class UserDataSync {
       todayExecutions: todayOnlyExecs.length > 0 ? todayOnlyExecs : physioExecutions,
       historyExecutions: physioExecutions
     }));
+    dispatch(setUserAppointments(appointments));
   }
 
   static clearStore(dispatch: AppDispatch): void {
@@ -61,5 +65,6 @@ export class UserDataSync {
     dispatch(resetMedications());
     dispatch(resetSleepLogs());
     dispatch(resetExerciseLogs());
+    dispatch(resetAppointments());
   }
 }

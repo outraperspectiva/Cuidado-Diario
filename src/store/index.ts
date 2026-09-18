@@ -5,6 +5,7 @@ import painReducer from './slices/painSlice';
 import medicationReducer from './slices/medicationSlice';
 import sleepReducer from './slices/sleepSlice';
 import exerciseReducer from './slices/exerciseSlice';
+import appointmentReducer from './slices/appointmentSlice';
 import uiReducer from './slices/uiSlice';
 
 export const store = configureStore({
@@ -14,6 +15,7 @@ export const store = configureStore({
     medications: medicationReducer,
     sleep: sleepReducer,
     exercise: exerciseReducer,
+    appointments: appointmentReducer,
     ui: uiReducer,
   },
   middleware: (getDefaultMiddleware) =>

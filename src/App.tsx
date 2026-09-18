@@ -13,6 +13,9 @@ import { EvolutionScreen } from './components/screens/EvolutionScreen';
 import { ProfileScreen } from './components/screens/ProfileScreen';
 import { AddPainLogModal } from './components/pain/AddPainLogModal';
 import { QuickSosModal } from './components/pain/QuickSosModal';
+import { AddAppointmentModal } from './components/appointments/AddAppointmentModal';
+import { AppointmentsOverviewModal } from './components/appointments/AppointmentsOverviewModal';
+import { QuickMedicationIntakeModal } from './components/medications/QuickMedicationIntakeModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { LogoutConfirmModal } from './components/auth/LogoutConfirmModal';
 import { LoginScreen } from './components/screens/LoginScreen';
@@ -103,6 +106,9 @@ export default function App() {
         {/* Modals & Dialogs */}
         <AddPainLogModal />
         <QuickSosModal />
+        <AddAppointmentModal />
+        <AppointmentsOverviewModal />
+        <QuickMedicationIntakeModal />
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
