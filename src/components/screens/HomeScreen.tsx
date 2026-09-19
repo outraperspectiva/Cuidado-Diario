@@ -7,6 +7,7 @@ import {
   setAddMedicationOpen,
   setAddExerciseOpen,
   setQuickIntakeModalOpen,
+  setQuickPhysioModalOpen,
   setAppointmentsModalOpen,
   showToast
 } from '../../store/slices/uiSlice';
@@ -70,6 +71,22 @@ export const HomeScreen: React.FC = () => {
     month: 'long'
   }).format(new Date());
 
+  const quickAccessCardRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    // Ao iniciar a sessão, garantir que o card azul com o dia da semana e mês seja apresentado na rolagem
+    const scrollToCard = () => {
+      if (quickAccessCardRef.current) {
+        quickAccessCardRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    };
+
+    scrollToCard();
+    const timer = setTimeout(scrollToCard, 60);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleToggleMed = (intakeId: string, medName: string) => {
     dispatch(toggleIntakeStatus({ id: intakeId }));
     dispatch(showToast({ message: `Status de ${medName} atualizado com sucesso!` }));
@@ -88,12 +105,25 @@ export const HomeScreen: React.FC = () => {
   return (
     <div className="space-y-4 pb-6">
       {/* Quick Access Card (Card de Registro Rápido) */}
-      <div className="bg-gradient-to-r from-[#103557] to-[#2B4C6F] rounded-3xl p-4 sm:p-5 text-white shadow-sm space-y-3.5">
+      <div
+        ref={quickAccessCardRef}
+        id="card-hoje-destaque-data"
+        className="bg-gradient-to-r from-[#103557] to-[#2B4C6F] rounded-3xl p-4 sm:p-5 text-white shadow-sm space-y-3.5 scroll-mt-4"
+      >
         {/* Date & Pain/SOS Quick Actions Header */}
-        <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-white/15">
-          <div className="flex items-center gap-1.5 text-xs text-[#88C6B0] font-semibold capitalize">
-            <Calendar className="w-3.5 h-3.5" />
-            <span>{todayDateFormatted}</span>
+        <div className="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-white/15">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-xl bg-white/15 flex items-center justify-center text-[#88C6B0] shrink-0">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight capitalize block leading-snug">
+                {todayDateFormatted}
+              </span>
+              <span className="text-[10px] text-[#88C6B0] font-medium block">
+                Plano Diário de Cuidado
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -101,7 +131,7 @@ export const HomeScreen: React.FC = () => {
               id="btn-register-pain-home"
               type="button"
               onClick={() => dispatch(setAddPainLogOpen(true))}
-              className="flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 border border-white/10"
+              className="flex items-center gap-1 bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 border border-white/10 cursor-pointer"
             >
               <Plus className="w-3 h-3" />
               <span>Registrar Dor</span>
@@ -110,7 +140,7 @@ export const HomeScreen: React.FC = () => {
               id="btn-sos-crise-feeling-card"
               type="button"
               onClick={() => dispatch(setQuickSosOpen(true))}
-              className="flex items-center gap-1 bg-[#D96B5B] hover:bg-[#B34045] text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 shadow-xs border border-white/20"
+              className="flex items-center gap-1 bg-[#D96B5B] hover:bg-[#B34045] text-white px-3 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 shadow-xs border border-white/20 cursor-pointer"
               title="Registrar Crise de Dor Imediata (SOS)"
             >
               <AlertCircle className="w-3 h-3 fill-white/20" />
@@ -153,10 +183,7 @@ export const HomeScreen: React.FC = () => {
             <button
               id="btn-quick-physio-home"
               type="button"
-              onClick={() => {
-                dispatch(setActiveTab('atividades'));
-                dispatch(setAddExerciseOpen(true));
-              }}
+              onClick={() => dispatch(setQuickPhysioModalOpen(true))}
               className="w-full text-left bg-white text-[#101D26] p-3 sm:p-3.5 rounded-2xl shadow-xs hover:bg-[#F6F8FA] transition-all active:scale-[0.99] border border-white/20 flex flex-col justify-between group cursor-pointer"
             >
               <div>

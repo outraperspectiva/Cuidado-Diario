@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { loginSuccess, setLoading, setError } from '../../store/slices/authSlice';
-import { showToast } from '../../store/slices/uiSlice';
+import { showToast, setActiveTab } from '../../store/slices/uiSlice';
 import { AuthService, PasswordStrength } from '../../services/authService';
 import { CuidadoDiarioLogo } from '../common/CuidadoDiarioLogo';
 import {
@@ -64,6 +64,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onContinueAsGuest }) =
 
       const user = await AuthService.loginWithGoogle(chosenEmail, chosenName);
       dispatch(loginSuccess(user));
+      dispatch(setActiveTab('hoje'));
       dispatch(
         showToast({
           message: `Bem-vindo, ${user.name}! Conectado com a Conta Google (${user.email}).`,
@@ -92,6 +93,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onContinueAsGuest }) =
         dispatch(setLoading(true));
         const user = await AuthService.login(email, password);
         dispatch(loginSuccess(user));
+        dispatch(setActiveTab('hoje'));
         dispatch(showToast({ message: `Bem-vindo de volta, ${user.name}!` }));
       } catch (err: any) {
         dispatch(setError(err.message || 'Falha ao autenticar'));
@@ -107,6 +109,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onContinueAsGuest }) =
         dispatch(setLoading(true));
         const user = await AuthService.register(name, email, password);
         dispatch(loginSuccess(user));
+        dispatch(setActiveTab('hoje'));
         dispatch(showToast({ message: 'Conta criada com sucesso!' }));
       } catch (err: any) {
         dispatch(setError(err.message || 'Falha ao cadastrar'));
@@ -120,6 +123,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onContinueAsGuest }) =
     try {
       const user = await AuthService.login('fabio.fernandez@clinica.com.br', 'DemoPass123!');
       dispatch(loginSuccess(user));
+      dispatch(setActiveTab('hoje'));
       dispatch(showToast({ message: 'Conectado como paciente Fábio Fernandez (Demonstração).' }));
     } catch {
       dispatch(setError('Erro ao iniciar demonstração'));

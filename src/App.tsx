@@ -16,6 +16,7 @@ import { QuickSosModal } from './components/pain/QuickSosModal';
 import { AddAppointmentModal } from './components/appointments/AddAppointmentModal';
 import { AppointmentsOverviewModal } from './components/appointments/AppointmentsOverviewModal';
 import { QuickMedicationIntakeModal } from './components/medications/QuickMedicationIntakeModal';
+import { QuickPhysioActivitiesModal } from './components/activities/QuickPhysioActivitiesModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { LogoutConfirmModal } from './components/auth/LogoutConfirmModal';
 import { LoginScreen } from './components/screens/LoginScreen';
@@ -28,6 +29,15 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);
+  const mainScrollRef = React.useRef<HTMLElement>(null);
+
+  React.useEffect(() => {
+    // Reset scroll to top on session start or navigation
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [activeTab, isAuthenticated, isGuestMode]);
 
   React.useEffect(() => {
     if (isAuthenticated && user) {
@@ -83,7 +93,12 @@ export default function App() {
 
         {!isAuthenticated && !isGuestMode ? (
           <div className="p-4 flex-1 flex flex-col justify-start overflow-y-auto">
-            <LoginScreen onContinueAsGuest={() => setIsGuestMode(true)} />
+            <LoginScreen
+              onContinueAsGuest={() => {
+                setIsGuestMode(true);
+                dispatch(setActiveTab('hoje'));
+              }}
+            />
           </div>
         ) : (
           <>
@@ -94,7 +109,7 @@ export default function App() {
             />
 
             {/* Dynamic Screen Viewport */}
-            <main className="flex-1 px-4 py-4 overflow-y-auto pb-24">
+            <main ref={mainScrollRef} className="flex-1 px-4 py-4 overflow-y-auto pb-24">
               {renderActiveScreen()}
             </main>
 
@@ -109,6 +124,7 @@ export default function App() {
         <AddAppointmentModal />
         <AppointmentsOverviewModal />
         <QuickMedicationIntakeModal />
+        <QuickPhysioActivitiesModal />
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
