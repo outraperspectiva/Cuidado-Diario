@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuidado Diário — Portal do projeto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F3F7F6; --surface:#FFFFFF; --sunken:#E8EFED; --ink:#14262A; --muted:#51666B; --line:#D2DFDC;
+  --brand:#16707A; --brand-ink:#0C4A52; --brand-soft:#DCEEEF; --on-brand:#FFFFFF;
+  --ok:#256F48; --ok-soft:#DAF0E3;
+  --warn:#8F520A; --warn-soft:#FAEACC;
+  --pend:#485B73; --pend-soft:#E3E9F0;
+  --crisis:#A82F23; --crisis-soft:#F8DDD9;
+  --font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1B1E; --surface:#152629; --sunken:#1B2F33; --ink:#E4EFEE; --muted:#9AB0B4; --line:#2A4043;
+    --brand:#5CC0CA; --brand-ink:#8ED8DF; --brand-soft:#173A3F; --on-brand:#0A1A1D;
+    --ok:#6CCB94; --ok-soft:#173A29; --warn:#E8B25A; --warn-soft:#3F2E10;
+    --pend:#9FB4CE; --pend-soft:#22303F; --crisis:#F08A7D; --crisis-soft:#452019;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1B1E; --surface:#152629; --sunken:#1B2F33; --ink:#E4EFEE; --muted:#9AB0B4; --line:#2A4043;
+  --brand:#5CC0CA; --brand-ink:#8ED8DF; --brand-soft:#173A3F; --on-brand:#0A1A1D;
+  --ok:#6CCB94; --ok-soft:#173A29; --warn:#E8B25A; --warn-soft:#3F2E10;
+  --pend:#9FB4CE; --pend-soft:#22303F; --crisis:#F08A7D; --crisis-soft:#452019;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--font-body);-webkit-text-size-adjust:100%}
+a{color:var(--brand-ink);text-underline-offset:3px}
+a:hover{color:var(--brand)}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px;border-radius:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;letter-spacing:-.015em;line-height:1.12;margin:0}
+p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- estrutura ---------- */
+.shell{display:grid;grid-template-columns:264px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;max-height:100vh;overflow:auto;
+  padding:32px 20px 24px 24px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:28px}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand strong{font:700 1.35rem/1.1 var(--font-display);letter-spacing:-.02em}
+.brand span{color:var(--muted);font-size:.9rem}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:block;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--ink);font-weight:500;border-left:3px solid transparent}
+.nav a:hover{background:var(--sunken)}
+.nav a[aria-current="page"]{background:var(--brand-soft);color:var(--brand-ink);border-left-color:var(--brand);font-weight:600}
+.side-foot{margin-top:auto;display:grid;gap:12px;color:var(--muted);font-size:.85rem}
+.theme{justify-self:start;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.85rem}
+.theme:hover{background:var(--sunken)}
+.main{padding:56px clamp(20px,5vw,72px) 96px;max-width:1040px;width:100%}
+.page[hidden]{display:none}
+.page>*+*{margin-top:56px}
+.sec>*+*{margin-top:16px}
+.lede{font-size:1.15rem;color:var(--muted);max-width:60ch}
+.note{font-size:.92rem;color:var(--muted);max-width:66ch}
+h1{font-size:clamp(2.3rem,5vw,3.6rem)}
+h2{font-size:clamp(1.45rem,2.6vw,1.8rem)}
+h3{font-size:1.15rem}
+
+/* ---------- pílulas e chips ---------- */
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;font-size:.82rem;font-weight:600;white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.pend{background:var(--pend-soft);color:var(--pend)}
+.pill.crisis{background:var(--crisis-soft);color:var(--crisis)}
+.chip{display:inline-block;padding:2px 10px;border:1px solid var(--line);border-radius:6px;font-size:.82rem;color:var(--muted);background:var(--surface)}
+
+/* ---------- botões ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;font-weight:600;font-size:.95rem}
+.btn:hover{background:var(--sunken);color:var(--ink)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.btn.primary:hover{filter:brightness(1.08);color:var(--on-brand)}
+.btn[aria-disabled="true"]{opacity:.6;cursor:not-allowed;border-style:dashed}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+
+/* ---------- visão geral ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:start}
+.hero-text>*+*{margin-top:20px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 1px 0 var(--line)}
+.day header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+.day h2{font-size:1.15rem}
+.day .count{color:var(--muted);font-size:.9rem}
+.day ul{list-style:none;margin:0;padding:0}
+.day li{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.day li:first-child{border-top:0}
+.day time{font-weight:600;font-variant-numeric:tabular-nums}
+.day .what small{display:block;color:var(--muted);font-size:.85rem}
+.state{border:0;border-radius:999px;padding:6px 14px;font-weight:600;font-size:.85rem;min-width:104px;transition:background-color .15s,color .15s}
+.state.pend{background:var(--pend-soft);color:var(--pend)}
+.state.ok{background:var(--ok-soft);color:var(--ok)}
+.state.warn{background:var(--warn-soft);color:var(--warn)}
+.day .hint{margin-top:10px;font-size:.85rem;color:var(--muted)}
+
+.facts{display:grid;grid-template-columns:max-content 1fr;gap:10px 28px;margin:0}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0;font-weight:500}
+
+.modules{border-top:1px solid var(--line)}
+.modules .row{display:grid;grid-template-columns:190px minmax(0,1fr) auto;gap:8px 24px;padding:16px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.modules .row strong{font-family:var(--font-display);font-size:1.05rem}
+.modules .row a{font-size:.9rem;white-space:nowrap}
+
+.people{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.people>div{border-left:3px solid var(--brand);padding-left:16px}
+.people h3{margin-bottom:4px}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;background:var(--sunken);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td .sub{display:block;color:var(--muted);font-size:.85rem}
+.blank{color:var(--muted);font-style:italic}
+.stack-inline{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- identidade ---------- */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.swatch{display:grid;grid-template-rows:72px auto;text-align:left;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.swatch i{background:var(--c);display:block}
+.swatch span{padding:10px 12px;display:grid;gap:0}
+.swatch b{font-weight:600}
+.swatch small{color:var(--muted)}
+.swatch:hover{border-color:var(--brand)}
+.ramp{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px}
+.ramp div{background:var(--c);color:#fff;border-radius:6px;padding:14px 0 8px;text-align:center;font-weight:600;font-size:.9rem}
+.ramp small{display:block;font-weight:400;font-size:.62rem;opacity:.9;margin-top:6px}
+.type-specimen{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.type-specimen>div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+.type-specimen .big{font:700 2rem/1.1 var(--font-display);letter-spacing:-.02em;margin:6px 0 10px}
+.type-specimen .body{font-size:1rem}
+.screens{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px}
+.screen .frame{aspect-ratio:9/16;border:2px dashed var(--line);border-radius:22px;display:grid;place-items:center;padding:16px;text-align:center;color:var(--muted);font-size:.88rem;background:var(--sunken)}
+.screen h3{font-size:1rem;margin-top:10px}
+.screen p{font-size:.85rem;color:var(--muted);margin-top:2px}
+.check{padding-left:0;list-style:none;display:grid;gap:8px;max-width:66ch;margin:0}
+.check li{padding-left:28px;position:relative}
+.check li::before{content:"";position:absolute;left:0;top:.38em;width:14px;height:14px;border:2px solid var(--brand);border-radius:4px}
+
+/* ---------- regras ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:.9rem;font-weight:500}
+.filters button:hover{background:var(--sunken)}
+.filters button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.mod[hidden]{display:none}
+.mod>*+*{margin-top:14px}
+.mod h3{padding-bottom:8px;border-bottom:2px solid var(--brand)}
+.rule{display:grid;grid-template-columns:76px minmax(0,1fr);gap:2px 16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.rid{font-weight:700;color:var(--brand-ink);font-variant-numeric:tabular-nums}
+.rule .meta{grid-column:2;display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+details{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+summary{cursor:pointer;padding:10px 16px;font-weight:600}
+details .table-wrap{border:0;border-top:1px solid var(--line);border-radius:0 0 10px 10px}
+
+.flow{display:grid;gap:0;max-width:600px}
+.node{padding:12px 16px;border:1px solid var(--line);background:var(--surface);border-radius:10px}
+.node.start{border-radius:999px;background:var(--brand-soft);border-color:transparent;color:var(--brand-ink);font-weight:600}
+.node.decision{border-style:dashed;border-width:2px;font-weight:600}
+.link{width:2px;height:18px;background:var(--line);margin-left:28px}
+.branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.out{padding:12px 14px;border-radius:10px;border-left:4px solid currentColor;font-size:.92rem}
+.out b{display:block;margin-bottom:2px}
+.out span{color:var(--ink)}
+.out.ok{background:var(--ok-soft);color:var(--ok)}
+.out.warn{background:var(--warn-soft);color:var(--warn)}
+.out.pend{background:var(--pend-soft);color:var(--pend)}
+.out.crisis{background:var(--crisis-soft);color:var(--crisis)}
+.flows{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px 48px;align-items:start}
+.flows h3{margin-bottom:14px}
+
+.pain{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:14px;max-width:640px}
+.pain-scale{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px}
+.pain-scale button{background:var(--c);color:#fff;border:2px solid transparent;border-radius:6px;padding:10px 0;font-weight:600;min-width:0}
+.pain-scale button[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:2px}
+.pain-ends{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
+.pain output{font-weight:600}
+.sos{display:flex;gap:10px;align-items:center}
+.sos input{width:20px;height:20px;accent-color:var(--crisis)}
+
+.open dl{margin:0;border-top:1px solid var(--line)}
+.open .q{display:grid;grid-template-columns:230px minmax(0,1fr);gap:4px 24px;padding:14px 0;border-bottom:1px solid var(--line)}
+.open dt{font-weight:600}
+.open dd{margin:0;color:var(--muted)}
+
+.tpl{font-size:.95rem}
+.tpl dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 20px;margin:0;padding:12px 16px 16px}
+.tpl dt{font-weight:600}
+.tpl dd{margin:0;color:var(--muted)}
+
+footer.foot{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem;max-width:70ch}
+
+/* ---------- responsivo ---------- */
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .side{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;max-height:none;overflow:visible;padding:12px 16px 0;gap:8px;
+    border-right:0;border-bottom:1px solid var(--line);background:var(--bg);display:grid;grid-template-columns:1fr auto;align-items:center}
+  .brand span{display:none}
+  .nav{grid-column:1/-1;flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:8px;margin:0 -16px;padding-inline:16px}
+  .nav a{white-space:nowrap;border-left:0;border-bottom:3px solid transparent;border-radius:8px 8px 0 0;padding:8px 12px}
+  .nav a[aria-current="page"]{border-bottom-color:var(--brand)}
+  .side-foot{margin:0}
+  .side-foot .stamp{display:none}
+  .hero{grid-template-columns:1fr;gap:32px}
+  .modules .row{grid-template-columns:1fr}
+  .open .q{grid-template-columns:1fr}
+  .main{padding-top:36px}
+}
+@media (max-width:520px){
+  .ramp small{display:none}
+  .facts{grid-template-columns:1fr;gap:2px}
+  .facts dd{margin-bottom:10px}
+  .rule{grid-template-columns:1fr}
+  .rule .meta{grid-column:1}
+  .day li{grid-template-columns:48px 1fr}
+  .day li .state{grid-column:1/-1;justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <aside class="side">
+    <div class="brand">
+      <strong>Cuidado Diário</strong>
+      <span>Portal do projeto</span>
+    </div>
+    <nav class="nav" aria-label="Seções do portal">
+      <a href="#visao-geral">Visão geral</a>
+      <a href="#identidade">Identidade visual e telas</a>
+      <a href="#regras">Regras de negócio</a>
+      <a href="#decisoes">Decisões do projeto</a>
+    </nav>
+    <div class="side-foot">
+      <button class="theme" id="themeBtn" type="button" aria-label="Alternar entre tema claro e escuro">Tema claro/escuro</button>
+      <p class="stamp">Montado a partir do repositório do projeto.</p>
+    </div>
+  </aside>
+
+  <main class="main" id="conteudo">
+
+    <!-- ===================== 1. VISÃO GERAL ===================== -->
+    <section class="page" id="visao-geral" aria-labelledby="t-visao">
+      <div class="hero">
+        <div class="hero-text">
+          <h1 id="t-visao">Cuidado Diário</h1>
+          <p class="lede">Ajuda quem está em tratamento, e quem cuida dessa pessoa, a não perder doses, sessões de fisioterapia e consultas, e a registrar a dor para acompanhar a evolução.</p>
+          <div class="btns">
+            <a class="btn primary" href="https://cuidado-diario.vercel.app" target="_blank" rel="noopener">Abrir o app publicado</a>
+            <a class="btn" href="https://github.com/outraperspectiva/Cuidado-Diario" target="_blank" rel="noopener">Ver o repositório</a>
+          </div>
+        </div>
+
+        <div class="day" aria-labelledby="t-dia">
+          <header>
+            <h2 id="t-dia">Um dia no app</h2>
+            <span class="count" id="dayCount"></span>
+          </header>
+          <ul id="dayList"></ul>
+          <p class="hint">Exemplo ilustrativo. Toque no estado para ver como cada item muda. Medicamentos têm três estados; fisioterapia, dois.</p>
+          <p class="sr" id="dayLive" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Situação do projeto</h2>
+        <dl class="facts">
+          <dt>Fase</dt><dd><span class="pill warn">Em desenvolvimento</span></dd>
+          <dt>Versão publicada</dt><dd><a href="https://cuidado-diario.vercel.app" target="_blank" rel="noopener">cuidado-diario.vercel.app</a> (Vercel)</dd>
+          <dt>Código</dt><dd>Repositório público no GitHub, branch <b>main</b></dd>
+          <dt>Próxima decisão</dt><dd><a href="#regras" data-go="regras">Pontos em aberto nas regras de negócio</a></dd>
+        </dl>
+      </div>
+
+      <div class="sec">
+        <h2>Links rápidos</h2>
+        <div class="btns">
+          <a class="btn" href="https://github.com/outraperspectiva/Cuidado-Diario" target="_blank" rel="noopener">Repositório do código</a>
+          <a class="btn" href="https://github.com/outraperspectiva/Cuidado-Diario/issues" target="_blank" rel="noopener">Tarefas e problemas (Issues)</a>
+          <a class="btn" href="https://github.com/users/outraperspectiva/projects/6" target="_blank" rel="noopener">Quadro de projetos</a>
+          <a class="btn" href="https://stitch.withgoogle.com/projects/486271888727693259" target="_blank" rel="noopener">Design no Stitch</a>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Para quem é</h2>
+        <div class="people">
+          <div>
+            <h3>Paciente</h3>
+            <p>Registra o que tomou, os exercícios que fez, a dor que sentiu e as consultas que tem marcadas.</p>
+          </div>
+          <div>
+            <h3>Cuidador</h3>
+            <p>Existe como perfil no cadastro para acompanhar e apoiar o tratamento do paciente.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>O que o app cobre</h2>
+        <div class="modules">
+          <div class="row"><strong>Medicamentos</strong><p>Cadastro de remédios, horários, estoque e confirmação de cada dose.</p><a href="#regras" data-go="regras" data-filter="medicamentos">Regras REQ-010 a 013</a></div>
+          <div class="row"><strong>Fisioterapia</strong><p>Prescrição de exercícios com séries e repetições, e registro de cada sessão feita.</p><a href="#regras" data-go="regras" data-filter="fisioterapia">Regras REQ-020 e 021</a></div>
+          <div class="row"><strong>Dor e sintomas</strong><p>Registro de dor em escala de 0 a 10, com região, tipo e marcação de crise (SOS).</p><a href="#regras" data-go="regras" data-filter="dor">Regras REQ-030 a 033</a></div>
+          <div class="row"><strong>Consultas</strong><p>Agenda de consultas com profissional, especialidade, data, hora e local ou link.</p><a href="#regras" data-go="regras" data-filter="consultas">Regras REQ-040 e 041</a></div>
+          <div class="row"><strong>Sono e evolução</strong><p>Relatórios visuais de adesão medicamentosa e acompanhamento longitudinal dos sintomas.</p><span class="pill ok">Implementado</span></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Onde o app roda e com o que foi feito</h2>
+        <p>O app está publicado na Vercel. O README também descreve como publicar no Google Cloud (Cloud Run) e no Oracle Cloud, e como usar Firebase ou PostgreSQL como banco de dados.</p>
+        <div class="stack-inline">
+          <span class="chip">React 18</span><span class="chip">TypeScript</span><span class="chip">Vite</span><span class="chip">Tailwind CSS</span><span class="chip">Redux Toolkit</span><span class="chip">Lucide (ícones)</span><span class="chip">Firebase Firestore e Auth</span><span class="chip">PostgreSQL (alternativa)</span>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Mapa do repositório em linguagem simples</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Item</th><th>O que é</th></tr></thead>
+            <tbody>
+              <tr><td><b>src</b></td><td>Código do aplicativo.</td></tr>
+              <tr><td><b>public</b></td><td>Arquivos estáticos servidos junto com o app (incluindo screenshots).</td></tr>
+              <tr><td><b>docs/portal.html</b></td><td>Portal do projeto (esta documentação viva de regras e design).</td></tr>
+              <tr><td><b>docs/screenshots</b></td><td>Imagens e capturas oficiais de tela do aplicativo.</td></tr>
+              <tr><td><b>firebase-blueprint.json</b></td><td>Desenho do modelo de dados (base das regras deste portal).</td></tr>
+              <tr><td><b>firestore.rules</b></td><td>Regras de segurança do banco de dados.</td></tr>
+              <tr><td><b>.env.example</b></td><td>Lista das configurações que o app precisa, sem valores secretos.</td></tr>
+              <tr><td><b>README.md</b></td><td>Guia de publicação e descrição do modelo de dados.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Como este portal se conecta ao código</h2>
+        <p>Cada regra tem um código (REQ-012, por exemplo). Quem programa, ou o agente de IA, cita esse código no ponto do código que aplica a regra, com um comentário como <b>// Regra REQ-012</b>. Assim, qualquer pessoa do negócio consegue ir da regra ao código, e do código de volta à regra.</p>
+      </div>
+    </section>
+
+    <!-- ===================== 2. IDENTIDADE VISUAL ===================== -->
+    <section class="page" id="identidade" aria-labelledby="t-ident">
+      <div class="sec">
+        <h1 id="t-ident">Identidade visual e telas</h1>
+        <p class="lede">A referência para conferir se as telas geradas no código estão certas.</p>
+        <p class="sr" id="copyLive" aria-live="polite"></p>
+      </div>
+
+      <div class="sec">
+        <h2>Cores de base</h2>
+        <div class="swatches">
+          <button class="swatch" type="button" data-hex="#103557" style="--c:#103557"><i></i><span><b>Azul Petróleo Escuro</b><small>#103557 · marca, cabeçalhos, botões</small></span></button>
+          <button class="swatch" type="button" data-hex="#2B4C6F" style="--c:#2B4C6F"><i></i><span><b>Azul Marinho Suave</b><small>#2B4C6F · gradientes dos cards</small></span></button>
+          <button class="swatch" type="button" data-hex="#88C6B0" style="--c:#88C6B0"><i></i><span><b>Verde Menta Cuidador</b><small>#88C6B0 · destaques e ícones</small></span></button>
+          <button class="swatch" type="button" data-hex="#F8FAFC" style="--c:#F8FAFC"><i></i><span><b>Névoa Suave</b><small>#F8FAFC · fundo das telas</small></span></button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Cores por estado</h2>
+        <p>O modelo de dados tem estados bem definidos. Cada um ganha uma cor, sempre acompanhada de texto, para que a cor nunca seja o único sinal.</p>
+        <div class="swatches">
+          <button class="swatch" type="button" data-hex="#16A34A" style="--c:#16A34A"><i></i><span><b>Tomada / Concluída</b><small>#16A34A</small></span></button>
+          <button class="swatch" type="button" data-hex="#D97706" style="--c:#D97706"><i></i><span><b>Pulada / Atenção</b><small>#D97706</small></span></button>
+          <button class="swatch" type="button" data-hex="#475569" style="--c:#475569"><i></i><span><b>Pendente / Agendada</b><small>#475569</small></span></button>
+          <button class="swatch" type="button" data-hex="#DC2626" style="--c:#DC2626"><i></i><span><b>Crise (SOS)</b><small>#DC2626</small></span></button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Escala de dor de 0 a 10</h2>
+        <p>Do verde ao vermelho, para que o nível seja reconhecido de relance.</p>
+        <div class="ramp" id="ramp" role="list"></div>
+      </div>
+
+      <div class="sec">
+        <h2>Tipografia</h2>
+        <div class="type-specimen">
+          <div>
+            <span class="chip">Títulos do portal</span>
+            <p class="big">Bricolage Grotesque</p>
+            <p class="note">Peso 500 e 700.</p>
+          </div>
+          <div>
+            <span class="chip">Texto do portal</span>
+            <p class="big" style="font-family:var(--font-body);font-weight:600;letter-spacing:0">Public Sans</p>
+            <p class="body">Registrar a dose de hoje leva poucos segundos.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Galeria de telas do aplicativo</h2>
+        <p>Capturas e diagramação das telas implementadas no repositório:</p>
+        <div class="screens">
+          <div class="screen">
+            <div class="frame" style="padding:0;overflow:hidden"><img src="screenshots/05-tela-login-autenticacao.png" alt="Tela de Entrada e Login" style="width:100%;height:100%;object-fit:cover" /></div>
+            <h3>Entrada e cadastro</h3><p>REQ-001, REQ-002</p>
+          </div>
+          <div class="screen">
+            <div class="frame" style="padding:0;overflow:hidden"><img src="screenshots/01-tela-hoje-dashboard.png" alt="Hoje - Doses e Sessões" style="width:100%;height:100%;object-fit:cover" /></div>
+            <h3>Hoje: doses e sessões</h3><p>REQ-012, REQ-021</p>
+          </div>
+          <div class="screen">
+            <div class="frame" style="padding:0;overflow:hidden"><img src="screenshots/02-tela-medicamentos.png" alt="Cadastro e Gestão de Medicamentos" style="width:100%;height:100%;object-fit:cover" /></div>
+            <h3>Gestão de medicamentos</h3><p>REQ-010 a REQ-013</p>
+          </div>
+          <div class="screen">
+            <div class="frame" style="padding:0;overflow:hidden"><img src="screenshots/03-tela-registro-dor.png" alt="Registro de dor e sintomas" style="width:100%;height:100%;object-fit:cover" /></div>
+            <h3>Registro de dor &amp; SOS</h3><p>REQ-030 a REQ-033</p>
+          </div>
+          <div class="screen">
+            <div class="frame" style="padding:0;overflow:hidden"><img src="screenshots/06-tela-fisioterapia-exercicios.png" alt="Prescrição e Sessão de Fisioterapia" style="width:100%;height:100%;object-fit:cover" /></div>
+            <h3>Fisioterapia diária</h3><p>REQ-020, REQ-021</p>
+          </div>
+          <div class="screen">
+            <div class="frame" style="padding:0;overflow:hidden"><img src="screenshots/04-tela-evolucao-relatorios.png" alt="Evolução e Relatórios Clínicos" style="width:100%;height:100%;object-fit:cover" /></div>
+            <h3>Evolução &amp; Relatórios</h3><p>Adesão e tendência</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Ao conferir uma tela gerada pelo agente</h2>
+        <ul class="check">
+          <li>Todos os campos da regra correspondente estão na tela, com os nomes que o negócio usa.</li>
+          <li>Cada estado aparece com a cor certa e com texto (Pendente, Tomada, Pulada, Concluída).</li>
+          <li>O botão de crise (SOS) é fácil de achar e não se confunde com um registro comum de dor.</li>
+          <li>A tela é legível em celular, que é onde o app será mais usado no dia a dia.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== 3. REGRAS DE NEGÓCIO ===================== -->
+    <section class="page" id="regras" aria-labelledby="t-regras">
+      <div class="sec">
+        <h1 id="t-regras">Regras de negócio</h1>
+        <p class="lede">O que o aplicativo deve fazer, sem falar de como o código é escrito.</p>
+        <p class="note">Estas regras foram extraídas do modelo de dados e do README. Nenhuma foi validada com o negócio ainda: todas estão como "Para validar". Depois de aprovar uma regra, troque o rótulo no portal.</p>
+      </div>
+
+      <div class="sec">
+        <div class="filters" role="group" aria-label="Filtrar por módulo" id="filters">
+          <button type="button" data-f="todos" aria-pressed="true">Todos</button>
+          <button type="button" data-f="contas" aria-pressed="false">Contas</button>
+          <button type="button" data-f="medicamentos" aria-pressed="false">Medicamentos</button>
+          <button type="button" data-f="fisioterapia" aria-pressed="false">Fisioterapia</button>
+          <button type="button" data-f="dor" aria-pressed="false">Dor e sintomas</button>
+          <button type="button" data-f="consultas" aria-pressed="false">Consultas</button>
+          <button type="button" data-f="privacidade" aria-pressed="false">Privacidade</button>
+        </div>
+      </div>
+
+      <!-- Contas -->
+      <div class="mod" data-mod="contas">
+        <h3>Contas e perfis</h3>
+        <div>
+          <article class="rule" id="REQ-001"><span class="rid">REQ-001</span><p>Toda pessoa que usa o app tem um perfil: <b>paciente</b> ou <b>cuidador</b>.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-002"><span class="rid">REQ-002</span><p>O acesso é feito com conta Google ou com e-mail e senha.</p><p class="meta"><span class="chip">Origem: README</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-003"><span class="rid">REQ-003</span><p>Cada pessoa vê e altera apenas os próprios registros de saúde. Todo registro pertence a um único usuário.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+        </div>
+        <details>
+          <summary>Campos do cadastro de usuário</summary>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Campo</th><th>O que é</th></tr></thead>
+            <tbody>
+              <tr><td>Nome</td><td>Nome do paciente ou do cuidador.</td></tr>
+              <tr><td>E-mail</td><td>E-mail usado para entrar.</td></tr>
+              <tr><td>Perfil</td><td>Paciente ou cuidador.</td></tr>
+              <tr><td>Data de criação</td><td>Quando a conta foi criada.</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+      </div>
+
+      <!-- Medicamentos -->
+      <div class="mod" data-mod="medicamentos">
+        <h3>Medicamentos</h3>
+        <div>
+          <article class="rule" id="REQ-010"><span class="rid">REQ-010</span><p>Cada medicamento é cadastrado com nome, dose, forma (comprimido, gotas, injeção etc.), horários, estoque e instruções médicas.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-011"><span class="rid">REQ-011</span><p>Um medicamento pode ter vários horários no mesmo dia (por exemplo, 08:00 e 20:00).</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-012"><span class="rid">REQ-012</span><p>Cada dose programada tem um registro com um dos estados: <b>pendente</b>, <b>tomada</b> ou <b>pulada</b>. O registro guarda a data, o horário programado e o horário em que a pessoa confirmou.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-013"><span class="rid">REQ-013</span><p>O app guarda a quantidade de cada medicamento em estoque.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+        </div>
+        <details>
+          <summary>Campos de medicamento e de dose</summary>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Campo</th><th>O que é</th></tr></thead>
+            <tbody>
+              <tr><td>Nome</td><td>Nome comercial ou genérico.</td></tr>
+              <tr><td>Dose</td><td>Texto livre, como "50 mg" ou "1 comprimido".</td></tr>
+              <tr><td>Forma</td><td>Comprimido, gotas, injeção etc.</td></tr>
+              <tr><td>Horários</td><td>Lista de horários prescritos.</td></tr>
+              <tr><td>Estoque</td><td>Quantidade atual, em número inteiro.</td></tr>
+              <tr><td>Instruções</td><td>Recomendações médicas em texto.</td></tr>
+              <tr><td><b>Dose:</b> horário programado</td><td>Horário previsto para tomar.</td></tr>
+              <tr><td><b>Dose:</b> horário da confirmação</td><td>Quando a pessoa confirmou.</td></tr>
+              <tr><td><b>Dose:</b> estado</td><td>Pendente, tomada ou pulada.</td></tr>
+              <tr><td><b>Dose:</b> data</td><td>Dia a que a dose se refere.</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+      </div>
+
+      <!-- Fisioterapia -->
+      <div class="mod" data-mod="fisioterapia">
+        <h3>Fisioterapia</h3>
+        <div>
+          <article class="rule" id="REQ-020"><span class="rid">REQ-020</span><p>Cada prescrição de fisioterapia tem título, horários, número de séries, número de repetições e tempo de sustentação em segundos.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-021"><span class="rid">REQ-021</span><p>Cada sessão realizada é registrada com o número da sessão dentro do total previsto (por exemplo, sessão 3 de 10), o horário previsto, o momento da conclusão e o estado: <b>pendente</b> ou <b>concluída</b>.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+        </div>
+        <details>
+          <summary>Campos de prescrição e de sessão</summary>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Campo</th><th>O que é</th></tr></thead>
+            <tbody>
+              <tr><td>Título</td><td>Nome do exercício ou do protocolo.</td></tr>
+              <tr><td>Horários</td><td>Lista de horários, como 09:00 e 16:00.</td></tr>
+              <tr><td>Séries</td><td>Quantas séries fazer.</td></tr>
+              <tr><td>Repetições</td><td>Quantas repetições por série.</td></tr>
+              <tr><td>Tempo de sustentação</td><td>Segundos que a posição é mantida.</td></tr>
+              <tr><td><b>Sessão:</b> número e total</td><td>Qual sessão é esta e quantas existem.</td></tr>
+              <tr><td><b>Sessão:</b> horário previsto e conclusão</td><td>Quando deveria ser feita e quando foi concluída.</td></tr>
+              <tr><td><b>Sessão:</b> estado e data</td><td>Pendente ou concluída, e o dia.</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+      </div>
+
+      <!-- Dor -->
+      <div class="mod" data-mod="dor">
+        <h3>Dor e sintomas</h3>
+        <div>
+          <article class="rule" id="REQ-030"><span class="rid">REQ-030</span><p>O nível de dor é um número de 0 a 10.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-031"><span class="rid">REQ-031</span><p>Cada registro informa a região do corpo afetada e o tipo de dor (queimação, pontada, latejante etc.).</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-032"><span class="rid">REQ-032</span><p>Um registro pode ser marcado como <b>crise aguda (SOS)</b>, o que o diferencia dos registros comuns.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-033"><span class="rid">REQ-033</span><p>Todo registro de dor guarda a data e a hora em que foi feito.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+        </div>
+        <details>
+          <summary>Campos do registro de dor</summary>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Campo</th><th>O que é</th></tr></thead>
+            <tbody>
+              <tr><td>Nível</td><td>De 0 a 10.</td></tr>
+              <tr><td>Região</td><td>Parte do corpo afetada.</td></tr>
+              <tr><td>Tipo</td><td>Queimação, pontada, latejante etc.</td></tr>
+              <tr><td>Crise (SOS)</td><td>Sim ou não.</td></tr>
+              <tr><td>Data e hora</td><td>Momento do registro.</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+
+        <div class="pain" aria-label="Simulação do registro de dor">
+          <h3>Simulação: nível de dor e crise</h3>
+          <div class="pain-scale" id="painScale" role="group" aria-label="Nível de dor de 0 a 10"></div>
+          <div class="pain-ends"><span>0: sem dor</span><span>10: pior dor possível</span></div>
+          <label class="sos"><input type="checkbox" id="sosBox"> Marcar como crise aguda (SOS)</label>
+          <p><output id="painOut" aria-live="polite">Escolha um nível para ver como o registro ficaria.</output></p>
+        </div>
+      </div>
+
+      <!-- Consultas -->
+      <div class="mod" data-mod="consultas">
+        <h3>Consultas</h3>
+        <div>
+          <article class="rule" id="REQ-040"><span class="rid">REQ-040</span><p>Cada consulta tem nome do profissional, especialidade, data, horário e local (endereço ou link de teleconsulta).</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+          <article class="rule" id="REQ-041"><span class="rid">REQ-041</span><p>Uma consulta tem um dos estados: <b>agendada</b>, <b>realizada</b> ou <b>cancelada</b>.</p><p class="meta"><span class="chip">Origem: modelo de dados</span><span class="pill pend">Para validar</span></p></article>
+        </div>
+      </div>
+
+      <!-- Privacidade -->
+      <div class="mod" data-mod="privacidade">
+        <h3>Privacidade</h3>
+        <div>
+          <article class="rule" id="REQ-050"><span class="rid">REQ-050</span><p>Informações de saúde são dados pessoais sensíveis pela LGPD. O app deve pedir consentimento para guardá-las e permitir que a pessoa peça a exclusão dos próprios dados.</p><p class="meta"><span class="chip">Origem: sugestão</span><span class="pill pend">Para validar</span><span class="chip">Revisar com o jurídico</span></p></article>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Fluxos de decisão</h2>
+        <div class="flows">
+          <div>
+            <h3>Confirmar uma dose</h3>
+            <div class="flow">
+              <div class="node start">Chega o horário programado da dose</div>
+              <div class="link"></div>
+              <div class="node">A dose fica <b>pendente</b> e aparece na lista do dia</div>
+              <div class="link"></div>
+              <div class="node decision">O que a pessoa faz?</div>
+              <div class="link"></div>
+              <div class="branches">
+                <div class="out ok"><b>Confirma que tomou</b><span>Estado: tomada. O horário da confirmação é guardado.</span></div>
+                <div class="out warn"><b>Escolhe não tomar</b><span>Estado: pulada.</span></div>
+                <div class="out pend"><b>Não responde</b><span>Continua pendente.</span></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3>Registrar uma dor</h3>
+            <div class="flow">
+              <div class="node start">A pessoa abre o registro de dor</div>
+              <div class="link"></div>
+              <div class="node">Escolhe o nível, de 0 a 10</div>
+              <div class="link"></div>
+              <div class="node">Informa a região do corpo e o tipo de dor</div>
+              <div class="link"></div>
+              <div class="node decision">Marca como crise aguda (SOS)?</div>
+              <div class="link"></div>
+              <div class="branches">
+                <div class="out crisis"><b>Sim</b><span>O registro é salvo como crise.</span></div>
+                <div class="out pend"><b>Não</b><span>O registro é salvo como comum.</span></div>
+              </div>
+              <div class="link"></div>
+              <div class="node">Data e hora são gravadas em ambos os casos</div>
+            </div>
+          </div>
+        </div>
+        <p class="note">Ainda sem fluxo desenhado: o que acontece quando a pessoa está sem internet, e se uma crise avisa o cuidador.</p>
+      </div>
+
+      <div class="sec open">
+        <h2>Pontos em aberto</h2>
+        <p>Perguntas que o modelo de dados e o README não respondem. Cada uma precisa de uma decisão do negócio antes de virar regra.</p>
+        <dl>
+          <div class="q"><dt>Sono e evolução de saúde</dt><dd>A descrição do repositório cita sono e evolução, com relatórios visuais no app. Planejar expansão com wearables no futuro.</dd></div>
+          <div class="q"><dt>Vínculo entre paciente e cuidador</dt><dd>Os perfis existem, mas cada registro pertence a um único usuário. Como o cuidador vê ou edita os dados do paciente, e como o paciente autoriza isso?</dd></div>
+          <div class="q"><dt>Estoque de medicamentos</dt><dd>O estoque diminui sozinho quando uma dose é marcada como tomada? Haverá aviso de estoque baixo?</dd></div>
+          <div class="q"><dt>Lembretes</dt><dd>O app avisa no horário da dose ou da sessão? Por qual canal?</dd></div>
+          <div class="q"><dt>Dose atrasada</dt><dd>Depois de quanto tempo uma dose pendente passa a ser considerada esquecida ou pulada?</dd></div>
+          <div class="q"><dt>Campos obrigatórios</dt><dd>Quais campos de cada cadastro são obrigatórios e quais limites valem (por exemplo, dor só de 0 a 10, sem decimais)?</dd></div>
+          <div class="q"><dt>Uso sem internet</dt><dd>O que a pessoa vê e o que é salvo se ela registrar uma dose ou uma dor sem conexão?</dd></div>
+          <div class="q"><dt>Privacidade e retenção</dt><dd>Por quanto tempo os dados de saúde ficam guardados e como a exclusão funciona?</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ===================== 4. DECISÕES ===================== -->
+    <section class="page" id="decisoes" aria-labelledby="t-dec">
+      <div class="sec">
+        <h1 id="t-dec">Decisões do projeto</h1>
+        <p class="lede">Por que o projeto é feito do jeito que é. Serve para quem chegar depois entender as escolhas.</p>
+        <p class="note">As decisões abaixo foram identificadas no README e nos arquivos do repositório. O motivo de cada uma só o time sabe: preencha a coluna "Motivo" e a data ao registrar.</p>
+      </div>
+
+      <div class="sec">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Código</th><th>Decisão</th><th>Onde aparece</th><th>Motivo</th></tr></thead>
+            <tbody>
+              <tr><td><b>ADR-001</b></td><td>Aplicativo web em React 18, TypeScript e Vite</td><td>README, package.json, vite.config.ts</td><td class="blank">A registrar</td></tr>
+              <tr><td><b>ADR-002</b></td><td>Estado do app gerenciado com Redux Toolkit</td><td>README</td><td class="blank">A registrar</td></tr>
+              <tr><td><b>ADR-003</b></td><td>Estilos com Tailwind CSS e ícones da biblioteca Lucide</td><td>README</td><td class="blank">A registrar</td></tr>
+              <tr><td><b>ADR-004</b></td><td>Banco de dados: Firebase Firestore como padrão, com o modelo pensado para também funcionar em PostgreSQL<span class="sub">Cloud SQL, Supabase, Neon ou Oracle</span></td><td>README (seção 4), firebase-blueprint.json</td><td class="blank">A registrar</td></tr>
+              <tr><td><b>ADR-005</b></td><td>Login com Firebase Authentication, por conta Google ou e-mail e senha</td><td>README (seção 1.1)</td><td class="blank">A registrar</td></tr>
+              <tr><td><b>ADR-006</b></td><td>Regras de segurança do banco guardadas no próprio repositório</td><td>firestore.rules</td><td class="blank">A registrar</td></tr>
+              <tr><td><b>ADR-007</b></td><td>Publicação na Vercel, com Google Cloud e Oracle Cloud documentados como alternativas</td><td>README, link do repositório</td><td class="blank">A registrar</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h2>Como registrar uma nova decisão</h2>
+        <details class="tpl">
+          <summary>Modelo para copiar</summary>
+          <dl>
+            <dt>Código</dt><dd>ADR-008 (o próximo número livre)</dd>
+            <dt>Data</dt><dd>Dia em que a decisão foi tomada</dd>
+            <dt>Decisão</dt><dd>O que foi escolhido, em uma frase</dd>
+            <dt>Motivo</dt><dd>Por que esta opção e não as outras</dd>
+            <dt>Alternativas</dt><dd>O que foi considerado e descartado</dd>
+            <dt>Quem decidiu</dt><dd>Pessoas ou papéis envolvidos</dd>
+            <dt>Regras afetadas</dt><dd>Códigos REQ que mudam por causa da decisão</dd>
+          </dl>
+        </details>
+      </div>
+    </section>
+
+    <footer class="foot">
+      Conteúdo montado a partir do repositório do projeto Cuidado Diário.
+    </footer>
+  </main>
+</div>
+
+<script>
+(function(){
+  var pages = ['visao-geral','identidade','regras','decisoes'];
+
+  /* ---------- navegação por seções ---------- */
+  function show(id){
+    if(pages.indexOf(id) < 0) id = pages[0];
+    pages.forEach(function(p){
+      var el = document.getElementById(p);
+      if(el) el.hidden = (p !== id);
+    });
+    document.querySelectorAll('.nav a').forEach(function(a){
+      if(a.getAttribute('href') === '#' + id) a.setAttribute('aria-current','page');
+      else a.removeAttribute('aria-current');
+    });
+    window.scrollTo(0,0);
+  }
+  function fromHash(){ show((location.hash || '').replace('#','')); }
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
+
+  /* ---------- tema ---------- */
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem('cd-theme'); if(saved) root.setAttribute('data-theme', saved); } catch(e){}
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var cur = root.getAttribute('data-theme');
+    var isDark = cur ? cur === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('cd-theme', next); } catch(e){}
+  });
+
+  /* ---------- dia de exemplo ---------- */
+  var items = [
+    {t:'08:00', kind:'med',  name:'Medicamento A', sub:'1 comprimido', s:0},
+    {t:'09:00', kind:'fis',  name:'Alongamento',   sub:'3 séries de 10 repetições', s:0},
+    {t:'16:00', kind:'fis',  name:'Alongamento',   sub:'3 séries de 10 repetições', s:0},
+    {t:'20:00', kind:'med',  name:'Medicamento A', sub:'1 comprimido', s:0}
+  ];
+  var labels = {
+    med:[['Pendente','pend'],['Tomada','ok'],['Pulada','warn']],
+    fis:[['Pendente','pend'],['Concluída','ok']]
+  };
+  var list = document.getElementById('dayList');
+  function renderDay(announce){
+    list.innerHTML = '';
+    var done = 0;
+    items.forEach(function(it, i){
+      if(it.s > 0 && !(it.kind==='med' && it.s===2)) done++;
+      var li = document.createElement('li');
+      var tm = document.createElement('time'); tm.textContent = it.t;
+      var w = document.createElement('div'); w.className = 'what';
+      w.innerHTML = '<b></b><small></small>';
+      w.querySelector('b').textContent = (it.kind==='med' ? 'Medicamento: ' : 'Fisioterapia: ') + it.name;
+      w.querySelector('small').textContent = it.sub;
+      var b = document.createElement('button');
+      var l = labels[it.kind][it.s];
+      b.type = 'button'; b.className = 'state ' + l[1]; b.textContent = l[0];
+      b.setAttribute('aria-label', w.querySelector('b').textContent + ' às ' + it.t + ': ' + l[0] + '. Toque para mudar.');
+      b.addEventListener('click', function(){
+        it.s = (it.s + 1) % labels[it.kind].length;
+        renderDay(true);
+        var again = list.children[i].querySelector('button'); if(again) again.focus();
+        document.getElementById('dayLive').textContent = it.name + ' às ' + it.t + ': ' + labels[it.kind][it.s][0];
+      });
+      li.appendChild(tm); li.appendChild(w); li.appendChild(b);
+      list.appendChild(li);
+    });
+    document.getElementById('dayCount').textContent = done + ' de ' + items.length + ' feitas';
+  }
+  renderDay(false);
+
+  /* ---------- escala de dor ---------- */
+  function hsl2hex(h,s,l){
+    s/=100; l/=100;
+    var k=function(n){return (n+h/30)%12;}, a=s*Math.min(l,1-l);
+    var f=function(n){return l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));};
+    var x=function(v){return Math.round(255*v).toString(16).padStart(2,'0');};
+    return ('#'+x(f(0))+x(f(8))+x(f(4))).toUpperCase();
+  }
+  var colors = [];
+  for(var i=0;i<=10;i++) colors.push(hsl2hex(140 - i*13.5, 62, 34));
+
+  var ramp = document.getElementById('ramp');
+  colors.forEach(function(c,i){
+    var d = document.createElement('div');
+    d.setAttribute('role','listitem');
+    d.style.setProperty('--c', c);
+    d.innerHTML = i + '<small>' + c + '</small>';
+    ramp.appendChild(d);
+  });
+
+  var scale = document.getElementById('painScale');
+  var level = null;
+  function updatePain(){
+    var out = document.getElementById('painOut');
+    if(level === null){ out.textContent = 'Escolha um nível para ver como o registro ficaria.'; return; }
+    var sos = document.getElementById('sosBox').checked;
+    out.textContent = 'Registro de dor nível ' + level + ' de 10, salvo como ' + (sos ? 'crise aguda (SOS).' : 'registro comum.');
+  }
+  colors.forEach(function(c,i){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = i; b.style.setProperty('--c', c);
+    b.setAttribute('aria-pressed','false');
+    b.setAttribute('aria-label','Nível ' + i);
+    b.addEventListener('click', function(){
+      level = i;
+      scale.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', x===b ? 'true':'false'); });
+      updatePain();
+    });
+    scale.appendChild(b);
+  });
+  document.getElementById('sosBox').addEventListener('change', updatePain);
+
+  /* ---------- filtro de regras ---------- */
+  function applyFilter(f){
+    document.querySelectorAll('#filters button').forEach(function(b){
+      b.setAttribute('aria-pressed', b.getAttribute('data-f') === f ? 'true' : 'false');
+    });
+    document.querySelectorAll('.mod').forEach(function(m){
+      m.hidden = !(f === 'todos' || m.getAttribute('data-mod') === f);
+    });
+  }
+  document.getElementById('filters').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(b) applyFilter(b.getAttribute('data-f'));
+  });
+  document.querySelectorAll('[data-go]').forEach(function(a){
+    a.addEventListener('click', function(){
+      var f = a.getAttribute('data-filter');
+      applyFilter(f || 'todos');
+    });
+  });
+
+  /* ---------- copiar cor ---------- */
+  var live = document.getElementById('copyLive');
+  document.querySelectorAll('.swatch').forEach(function(s){
+    s.addEventListener('click', function(){
+      var hex = s.getAttribute('data-hex');
+      var done = function(){ live.textContent = hex + ' copiado.'; };
+      var fail = function(){ live.textContent = 'Não foi possível copiar. O código é ' + hex + '.'; };
+      try {
+        if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(hex).then(done, fail); }
+        else fail();
+      } catch(e){ fail(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
