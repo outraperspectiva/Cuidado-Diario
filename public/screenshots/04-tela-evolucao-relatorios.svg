@@ -1,0 +1,201 @@
+
+<svg width="750" height="1334" viewBox="0 0 750 1334" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#103557" />
+      <stop offset="100%" stop-color="#2B4C6F" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#103557" />
+      <stop offset="100%" stop-color="#2B4C6F" />
+    </linearGradient>
+    <linearGradient id="sosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DC2626" />
+      <stop offset="100%" stop-color="#991B1B" />
+    </linearGradient>
+    <linearGradient id="painGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="35%" stop-color="#F59E0B" />
+      <stop offset="70%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#EF4444" />
+    </linearGradient>
+    <linearGradient id="greenBadge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <filter id="cardGlow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#103557" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="750" height="1334" fill="#F8FAFC" />
+
+  <!-- Top Mobile Status Bar -->
+  <rect width="750" height="54" fill="#103557" />
+  <text x="54" y="36" fill="#FFFFFF" font-size="20" font-weight="600">09:41</text>
+  <circle cx="640" cy="30" r="4" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="654" cy="30" r="5" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="670" cy="30" r="6" fill="#FFFFFF" opacity="0.9" />
+  <!-- Battery -->
+  <rect x="690" y="22" width="34" height="16" rx="4" fill="none" stroke="#FFFFFF" stroke-width="2" />
+  <rect x="694" y="25" width="22" height="10" rx="2" fill="#10B981" />
+  <path d="M725 27 C727 27 728 28 728 30 L728 30 C728 32 727 33 725 33" stroke="#FFFFFF" stroke-width="2" />
+
+  <!-- Top App Bar -->
+  <g transform="translate(0, 54)">
+    <rect width="750" height="85" fill="#103557" />
+    <text x="32" y="52" fill="#FFFFFF" font-size="24" font-weight="700">Evolução &amp; Relatórios</text>
+    
+    <rect x="520" y="24" width="198" height="42" rx="21" fill="#FFFFFF" />
+    <text x="619" y="50" fill="#103557" font-size="14" font-weight="700" text-anchor="middle">📄 Exportar PDF</text>
+  </g>
+
+  <g transform="translate(32, 160)">
+    <!-- Summary KPI cards -->
+    <g>
+      <rect x="0" y="0" width="215" height="110" rx="18" fill="#FFFFFF" filter="url(#shadow)" />
+      <text x="20" y="32" fill="#64748B" font-size="13" font-weight="600">Média Dor (7d)</text>
+      <text x="20" y="68" fill="#10B981" font-size="30" font-weight="800">3.2</text>
+      <text x="20" y="92" fill="#10B981" font-size="12" font-weight="600">↓ 28% menor que ant.</text>
+
+      <rect x="235" y="0" width="215" height="110" rx="18" fill="#FFFFFF" filter="url(#shadow)" />
+      <text x="255" y="32" fill="#64748B" font-size="13" font-weight="600">Adesão Remédios</text>
+      <text x="255" y="68" fill="#2563EB" font-size="30" font-weight="800">96%</text>
+      <text x="255" y="92" fill="#2563EB" font-size="12" font-weight="600">Excelente disciplina</text>
+
+      <rect x="470" y="0" width="216" height="110" rx="18" fill="#FFFFFF" filter="url(#shadow)" />
+      <text x="490" y="32" fill="#64748B" font-size="13" font-weight="600">Sono Médio</text>
+      <text x="490" y="68" fill="#7C3AED" font-size="30" font-weight="800">7.4h</text>
+      <text x="490" y="92" fill="#7C3AED" font-size="12" font-weight="600">Qualidade Boa</text>
+    </g>
+
+    <!-- Weekly Pain Trend Chart -->
+    <g transform="translate(0, 134)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="300" rx="22" fill="#FFFFFF" />
+      <text x="24" y="38" fill="#0F172A" font-size="18" font-weight="700">Histórico de Nível de Dor (Últimos 7 Dias)</text>
+      <text x="24" y="60" fill="#64748B" font-size="13">Tendência decrescente com fisioterapia e medicação regular</text>
+
+      <!-- Chart grid lines -->
+      <line x1="60" y1="90" x2="640" y2="90" stroke="#F1F5F9" stroke-width="1.5" />
+      <line x1="60" y1="140" x2="640" y2="140" stroke="#F1F5F9" stroke-width="1.5" />
+      <line x1="60" y1="190" x2="640" y2="190" stroke="#F1F5F9" stroke-width="1.5" />
+      <line x1="60" y1="240" x2="640" y2="240" stroke="#E2E8F0" stroke-width="1.5" />
+
+      <!-- Y Axis labels -->
+      <text x="40" y="95" fill="#94A3B8" font-size="12" text-anchor="end">8</text>
+      <text x="40" y="145" fill="#94A3B8" font-size="12" text-anchor="end">5</text>
+      <text x="40" y="195" fill="#94A3B8" font-size="12" text-anchor="end">2</text>
+      <text x="40" y="245" fill="#94A3B8" font-size="12" text-anchor="end">0</text>
+
+      <!-- Gradient Area Under Curve -->
+      <path d="M90 120 L180 145 L270 110 L360 160 L450 170 L540 190 L610 185 L610 240 L90 240 Z" fill="#88C6B0" fill-opacity="0.25" />
+      <!-- Line Chart -->
+      <path d="M90 120 L180 145 L270 110 L360 160 L450 170 L540 190 L610 185" fill="none" stroke="#103557" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+
+      <!-- Data point nodes -->
+      <circle cx="90" cy="120" r="6" fill="#EF4444" stroke="#FFFFFF" stroke-width="2.5" />
+      <circle cx="180" cy="145" r="6" fill="#F59E0B" stroke="#FFFFFF" stroke-width="2.5" />
+      <circle cx="270" cy="110" r="6" fill="#EF4444" stroke="#FFFFFF" stroke-width="2.5" />
+      <circle cx="360" cy="160" r="6" fill="#10B981" stroke="#FFFFFF" stroke-width="2.5" />
+      <circle cx="450" cy="170" r="6" fill="#10B981" stroke="#FFFFFF" stroke-width="2.5" />
+      <circle cx="540" cy="190" r="6" fill="#10B981" stroke="#FFFFFF" stroke-width="2.5" />
+      <circle cx="610" cy="185" r="7" fill="#10B981" stroke="#FFFFFF" stroke-width="3" />
+
+      <!-- X Axis Days -->
+      <text x="90" y="268" fill="#64748B" font-size="13" font-weight="600" text-anchor="middle">Sáb</text>
+      <text x="180" y="268" fill="#64748B" font-size="13" font-weight="600" text-anchor="middle">Dom</text>
+      <text x="270" y="268" fill="#64748B" font-size="13" font-weight="600" text-anchor="middle">Seg</text>
+      <text x="360" y="268" fill="#64748B" font-size="13" font-weight="600" text-anchor="middle">Ter</text>
+      <text x="450" y="268" fill="#64748B" font-size="13" font-weight="600" text-anchor="middle">Qua</text>
+      <text x="540" y="268" fill="#64748B" font-size="13" font-weight="600" text-anchor="middle">Qui</text>
+      <text x="610" y="268" fill="#103557" font-size="13" font-weight="800" text-anchor="middle">Hoje (Sex)</text>
+    </g>
+
+    <!-- Insights & Clinical Feedback Card -->
+    <g transform="translate(0, 455)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="160" rx="22" fill="#FFFFFF" />
+      <rect x="24" y="24" width="48" height="48" rx="14" fill="#EBF5FF" />
+      <!-- Sparkle/Brain icon -->
+      <path d="M48 36 L52 48 L48 60 L44 48 Z" fill="#2563EB" />
+      <circle cx="48" cy="48" r="4" fill="#FFFFFF" />
+
+      <text x="86" y="44" fill="#0F172A" font-size="18" font-weight="700">Destaque Clínico da Semana</text>
+      <text x="86" y="68" fill="#16A34A" font-size="14" font-weight="700">✓ Redução de 45% nos picos agudos de dor</text>
+
+      <text x="24" y="110" fill="#475569" font-size="14" font-weight="500">
+        A combinação de pregabalina em dose contínua com as sessões diárias
+      </text>
+      <text x="24" y="132" fill="#475569" font-size="14" font-weight="500">
+        de fisioterapia lombar proporcionou 5 dias consecutivos sem crises SOS.
+      </text>
+    </g>
+
+    <!-- Physiological correlations -->
+    <g transform="translate(0, 635)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="150" rx="22" fill="#FFFFFF" />
+      <text x="24" y="38" fill="#0F172A" font-size="17" font-weight="700">Adesão aos Tratamentos</text>
+
+      <g transform="translate(24, 60)">
+        <text x="0" y="18" fill="#334155" font-size="14" font-weight="600">Medicamentos prescritos</text>
+        <text x="638" y="18" fill="#103557" font-size="14" font-weight="800" text-anchor="end">27 de 28 doses (96%)</text>
+        <rect x="0" y="28" width="638" height="10" rx="5" fill="#E2E8F0" />
+        <rect x="0" y="28" width="612" height="10" rx="5" fill="#10B981" />
+
+        <text x="0" y="65" fill="#334155" font-size="14" font-weight="600">Exercícios de Fisioterapia</text>
+        <text x="638" y="65" fill="#103557" font-size="14" font-weight="800" text-anchor="end">6 de 7 dias (86%)</text>
+        <rect x="0" y="75" width="638" height="10" rx="5" fill="#E2E8F0" />
+        <rect x="0" y="75" width="548" height="10" rx="5" fill="#3B82F6" />
+      </g>
+    </g>
+  </g>
+
+  
+  <!-- Bottom Navigation Bar -->
+  <g id="bottomNav">
+    <rect x="0" y="1220" width="750" height="114" fill="#FFFFFF" filter="url(#shadow)" />
+    <line x1="0" y1="1220" x2="750" y2="1220" stroke="#E2E8F0" stroke-width="1.5" />
+    
+    <!-- Tab 1: Hoje -->
+    <g transform="translate(45, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M25 28 L35 18 L45 28 M28 25 L28 33 L42 33 L42 25" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Hoje</text>
+    </g>
+
+    <!-- Tab 2: Remédios -->
+    <g transform="translate(190, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <rect x="26" y="19" width="18" height="10" rx="5" transform="rotate(-45 35 24)" stroke="#94A3B8" stroke-width="2.5" fill="none" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Remédios</text>
+    </g>
+
+    <!-- Tab 3: Dor -->
+    <g transform="translate(340, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M35 16 C30 16 26 21 26 26 C26 34 35 40 35 40 C35 40 44 34 44 26 C44 21 40 16 35 16 Z" stroke="#94A3B8" stroke-width="2.2" fill="none" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Dor</text>
+    </g>
+
+    <!-- Tab 4: Fisio -->
+    <g transform="translate(490, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M27 30 L32 20 L38 28 L43 23" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Fisio</text>
+    </g>
+
+    <!-- Tab 5: Evolução -->
+    <g transform="translate(635, 1235)">
+      <circle cx="35" cy="24" r="22" fill="#EBF5FF" />
+      <path d="M26 33 L32 26 L38 30 L44 20" stroke="#103557" stroke-width="2.5" fill="none" stroke-linecap="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="700" fill="#103557">Evolução</text>
+    </g>
+
+    <!-- Home Indicator bar -->
+    <rect x="285" y="1312" width="180" height="5" rx="2.5" fill="#CBD5E1" />
+  </g>
+</svg>
+

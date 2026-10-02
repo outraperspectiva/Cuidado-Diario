@@ -1,0 +1,96 @@
+
+<svg width="750" height="1334" viewBox="0 0 750 1334" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="loginBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#103557" />
+      <stop offset="50%" stop-color="#1A446C" />
+      <stop offset="100%" stop-color="#2B4C6F" />
+    </linearGradient>
+    <filter id="loginShadow" x="-10%" y="-10%" width="120%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#000000" flood-opacity="0.18" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="750" height="1334" fill="url(#loginBg)" />
+
+  <!-- Mobile Status Bar -->
+  <text x="54" y="42" fill="#FFFFFF" font-size="20" font-weight="600">09:41</text>
+  <circle cx="640" cy="36" r="4" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="654" cy="36" r="5" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="670" cy="36" r="6" fill="#FFFFFF" opacity="0.9" />
+  <rect x="690" y="28" width="34" height="16" rx="4" fill="none" stroke="#FFFFFF" stroke-width="2" />
+  <rect x="694" y="31" width="22" height="10" rx="2" fill="#88C6B0" />
+
+  <!-- App Logo & Branding Header -->
+  <g transform="translate(375, 180)">
+    <!-- Logo Circle Icon -->
+    <circle cx="0" cy="0" r="54" fill="#FFFFFF" fill-opacity="0.15" />
+    <circle cx="0" cy="0" r="42" fill="#FFFFFF" />
+    <!-- Heart / Cross icon -->
+    <path d="M-14 -4 C-22 -14 -10 -24 0 -14 C10 -24 22 -14 14 -4 L0 12 Z" fill="#103557" />
+    <path d="M-5 18 L5 18 M0 13 L0 23" stroke="#88C6B0" stroke-width="3" stroke-linecap="round" />
+
+    <text x="0" y="95" fill="#FFFFFF" font-size="34" font-weight="800" text-anchor="middle">Cuidado Diário</text>
+    <text x="0" y="128" fill="#93C5FD" font-size="17" font-weight="500" text-anchor="middle">Seu companheiro diário de saúde e reabilitação</text>
+  </g>
+
+  <!-- Login Card White Container -->
+  <g transform="translate(45, 370)" filter="url(#loginShadow)">
+    <rect x="0" y="0" width="660" height="740" rx="32" fill="#FFFFFF" />
+
+    <g transform="translate(45, 45)">
+      <text x="0" y="24" fill="#0F172A" font-size="24" font-weight="800">Bem-vindo(a)!</text>
+      <text x="0" y="52" fill="#64748B" font-size="15">Acesse para acompanhar seus medicamentos e dores</text>
+
+      <!-- Google Sign In Button -->
+      <g transform="translate(0, 85)">
+        <rect x="0" y="0" width="570" height="60" rx="18" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.8" />
+        <!-- Google G icon -->
+        <g transform="translate(24, 18)">
+          <path d="M12 0 C18 0 22 4 23 9 L17 9 C16 7 14 5 12 5 C8 5 5 8 5 12 C5 16 8 19 12 19 C15 19 17 17 18 14 L12 14 L12 10 L23 10 C24 16 20 24 12 24 C5 24 0 19 0 12 C0 5 5 0 12 0 Z" fill="#4285F4" />
+        </g>
+        <text x="285" y="37" fill="#1E293B" font-size="16" font-weight="700" text-anchor="middle">Continuar com Conta Google</text>
+      </g>
+
+      <!-- Divider OR -->
+      <g transform="translate(0, 180)">
+        <line x1="0" y1="12" x2="240" y2="12" stroke="#E2E8F0" stroke-width="1.5" />
+        <text x="285" y="18" fill="#94A3B8" font-size="14" font-weight="600" text-anchor="middle">ou com e-mail</text>
+        <line x1="330" y1="12" x2="570" y2="12" stroke="#E2E8F0" stroke-width="1.5" />
+      </g>
+
+      <!-- Email Field -->
+      <g transform="translate(0, 225)">
+        <text x="4" y="0" fill="#334155" font-size="14" font-weight="700">E-mail</text>
+        <rect x="0" y="12" width="570" height="56" rx="16" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5" />
+        <text x="20" y="47" fill="#0F172A" font-size="16">fabio.fernandez@exemplo.com</text>
+      </g>
+
+      <!-- Password Field -->
+      <g transform="translate(0, 325)">
+        <text x="4" y="0" fill="#334155" font-size="14" font-weight="700">Senha</text>
+        <rect x="0" y="12" width="570" height="56" rx="16" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5" />
+        <text x="20" y="52" fill="#0F172A" font-size="22" letter-spacing="4">••••••••••••</text>
+      </g>
+
+      <!-- Sign In Button -->
+      <g transform="translate(0, 430)">
+        <rect x="0" y="0" width="570" height="60" rx="18" fill="#103557" />
+        <text x="285" y="37" fill="#FFFFFF" font-size="17" font-weight="700" text-anchor="middle">Entrar no Aplicativo</text>
+      </g>
+
+      <!-- Visitor Demo Mode Button -->
+      <g transform="translate(0, 510)">
+        <rect x="0" y="0" width="570" height="58" rx="18" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.8" />
+        <text x="285" y="36" fill="#166534" font-size="16" font-weight="700" text-anchor="middle">⚡ Acessar Modo Demonstração / Visitante</text>
+      </g>
+
+      <!-- Helper tip -->
+      <text x="285" y="605" fill="#94A3B8" font-size="13" text-anchor="middle">Seus dados de saúde protegidos com criptografia ponta a ponta</text>
+    </g>
+  </g>
+
+  <!-- Footer Indicator -->
+  <rect x="285" y="1305" width="180" height="5" rx="2.5" fill="#FFFFFF" fill-opacity="0.4" />
+</svg>

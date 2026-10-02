@@ -1,0 +1,190 @@
+
+<svg width="750" height="1334" viewBox="0 0 750 1334" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#103557" />
+      <stop offset="100%" stop-color="#2B4C6F" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#103557" />
+      <stop offset="100%" stop-color="#2B4C6F" />
+    </linearGradient>
+    <linearGradient id="sosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DC2626" />
+      <stop offset="100%" stop-color="#991B1B" />
+    </linearGradient>
+    <linearGradient id="painGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="35%" stop-color="#F59E0B" />
+      <stop offset="70%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#EF4444" />
+    </linearGradient>
+    <linearGradient id="greenBadge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <filter id="cardGlow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#103557" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="750" height="1334" fill="#F8FAFC" />
+
+  <!-- Top Mobile Status Bar -->
+  <rect width="750" height="54" fill="#103557" />
+  <text x="54" y="36" fill="#FFFFFF" font-size="20" font-weight="600">09:41</text>
+  <circle cx="640" cy="30" r="4" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="654" cy="30" r="5" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="670" cy="30" r="6" fill="#FFFFFF" opacity="0.9" />
+  <!-- Battery -->
+  <rect x="690" y="22" width="34" height="16" rx="4" fill="none" stroke="#FFFFFF" stroke-width="2" />
+  <rect x="694" y="25" width="22" height="10" rx="2" fill="#10B981" />
+  <path d="M725 27 C727 27 728 28 728 30 L728 30 C728 32 727 33 725 33" stroke="#FFFFFF" stroke-width="2" />
+
+  <!-- Top App Bar -->
+  <g transform="translate(0, 54)">
+    <rect width="750" height="85" fill="#103557" />
+    <text x="32" y="52" fill="#FFFFFF" font-size="24" font-weight="700">Medicamentos &amp; Tratamentos</text>
+    
+    <rect x="520" y="24" width="198" height="42" rx="21" fill="#88C6B0" />
+    <text x="619" y="50" fill="#103557" font-size="15" font-weight="800" text-anchor="middle">+ Novo Remédio</text>
+  </g>
+
+  <!-- Filter chips -->
+  <g transform="translate(32, 160)">
+    <rect x="0" y="0" width="110" height="42" rx="21" fill="#103557" />
+    <text x="55" y="26" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Todos (4)</text>
+
+    <rect x="122" y="0" width="130" height="42" rx="21" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+    <text x="187" y="26" fill="#64748B" font-size="14" font-weight="600" text-anchor="middle">Manhã (2)</text>
+
+    <rect x="264" y="0" width="130" height="42" rx="21" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+    <text x="329" y="26" fill="#64748B" font-size="14" font-weight="600" text-anchor="middle">Tarde (1)</text>
+
+    <rect x="406" y="0" width="130" height="42" rx="21" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+    <text x="471" y="26" fill="#64748B" font-size="14" font-weight="600" text-anchor="middle">Noite (1)</text>
+  </g>
+
+  <!-- Cards List -->
+  <g transform="translate(32, 226)">
+    <!-- Med Card 1 -->
+    <g transform="translate(0, 0)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="154" rx="20" fill="#FFFFFF" />
+      <rect x="24" y="24" width="56" height="56" rx="16" fill="#DCFCE7" />
+      <path d="M42 52 L50 60 L62 46" stroke="#16A34A" stroke-width="3.5" fill="none" stroke-linecap="round" />
+
+      <text x="96" y="50" fill="#0F172A" font-size="20" font-weight="700">Dipirona Monoidratada</text>
+      <text x="96" y="74" fill="#64748B" font-size="15">500mg • Comprimido • A cada 8 horas</text>
+
+      <rect x="96" y="94" width="105" height="32" rx="8" fill="#F1F5F9" />
+      <text x="148" y="115" fill="#334155" font-size="13" font-weight="600" text-anchor="middle">⏰ 08:00, 16:00</text>
+
+      <rect x="212" y="94" width="125" height="32" rx="8" fill="#F0FDF4" />
+      <text x="274" y="115" fill="#16A34A" font-size="13" font-weight="600" text-anchor="middle">✓ Estoque: 24 cp</text>
+
+      <rect x="526" y="32" width="136" height="40" rx="20" fill="#DCFCE7" />
+      <text x="594" y="57" fill="#15803D" font-size="14" font-weight="700" text-anchor="middle">Tomado 08:00</text>
+    </g>
+
+    <!-- Med Card 2: Low Stock Warning -->
+    <g transform="translate(0, 174)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="180" rx="20" fill="#FFFFFF" />
+      <rect x="24" y="24" width="56" height="56" rx="16" fill="#FEF3C7" />
+      <circle cx="52" cy="52" r="16" fill="none" stroke="#D97706" stroke-width="3" />
+      <text x="52" y="58" fill="#D97706" font-size="20" font-weight="800" text-anchor="middle">!</text>
+
+      <text x="96" y="50" fill="#0F172A" font-size="20" font-weight="700">Pregabalina</text>
+      <text x="96" y="74" fill="#64748B" font-size="15">75mg • Cápsula • Às 14:00 e 22:00</text>
+
+      <!-- Low Stock Banner Inside Card -->
+      <rect x="24" y="94" width="638" height="36" rx="10" fill="#FEF2F2" />
+      <text x="44" y="117" fill="#B91C1C" font-size="13" font-weight="700">⚠️ Estoque Baixo: Apenas 4 cápsulas restantes (Acaba em 2 dias)</text>
+      <text x="590" y="117" fill="#DC2626" font-size="13" font-weight="700">Repor →</text>
+
+      <rect x="526" y="32" width="136" height="44" rx="22" fill="#103557" />
+      <text x="594" y="59" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">Registrar Dose</text>
+    </g>
+
+    <!-- Med Card 3 -->
+    <g transform="translate(0, 374)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="154" rx="20" fill="#FFFFFF" />
+      <rect x="24" y="24" width="56" height="56" rx="16" fill="#E0F2FE" />
+      <path d="M42 52 L50 60 L62 46" stroke="#0284C7" stroke-width="3.5" fill="none" stroke-linecap="round" />
+
+      <text x="96" y="50" fill="#0F172A" font-size="20" font-weight="700">Omeprazol</text>
+      <text x="96" y="74" fill="#64748B" font-size="15">20mg • Cápsula em jejum</text>
+
+      <rect x="96" y="94" width="125" height="32" rx="8" fill="#F1F5F9" />
+      <text x="158" y="115" fill="#334155" font-size="13" font-weight="600" text-anchor="middle">⏰ 07:00 (Jejum)</text>
+
+      <rect x="526" y="32" width="136" height="40" rx="20" fill="#DCFCE7" />
+      <text x="594" y="57" fill="#15803D" font-size="14" font-weight="700" text-anchor="middle">Tomado 07:02</text>
+    </g>
+
+    <!-- Med Card 4 -->
+    <g transform="translate(0, 548)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="154" rx="20" fill="#FFFFFF" />
+      <rect x="24" y="24" width="56" height="56" rx="16" fill="#F3E8FF" />
+      <circle cx="52" cy="52" r="16" fill="none" stroke="#7E22CE" stroke-width="3" />
+
+      <text x="96" y="50" fill="#0F172A" font-size="20" font-weight="700">Melatonina Gotas</text>
+      <text x="96" y="74" fill="#64748B" font-size="15">3 gotas • Ao deitar para sono reparador</text>
+
+      <rect x="96" y="94" width="130" height="32" rx="8" fill="#F1F5F9" />
+      <text x="161" y="115" fill="#334155" font-size="13" font-weight="600" text-anchor="middle">⏰ 22:30 (Agendado)</text>
+
+      <rect x="526" y="32" width="136" height="40" rx="20" fill="#F1F5F9" />
+      <text x="594" y="57" fill="#475569" font-size="14" font-weight="600" text-anchor="middle">Agendado</text>
+    </g>
+  </g>
+
+  
+  <!-- Bottom Navigation Bar -->
+  <g id="bottomNav">
+    <rect x="0" y="1220" width="750" height="114" fill="#FFFFFF" filter="url(#shadow)" />
+    <line x1="0" y1="1220" x2="750" y2="1220" stroke="#E2E8F0" stroke-width="1.5" />
+    
+    <!-- Tab 1: Hoje -->
+    <g transform="translate(45, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M25 28 L35 18 L45 28 M28 25 L28 33 L42 33 L42 25" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Hoje</text>
+    </g>
+
+    <!-- Tab 2: Remédios -->
+    <g transform="translate(190, 1235)">
+      <circle cx="35" cy="24" r="22" fill="#EBF5FF" />
+      <rect x="26" y="19" width="18" height="10" rx="5" transform="rotate(-45 35 24)" stroke="#103557" stroke-width="2.5" fill="none" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="700" fill="#103557">Remédios</text>
+    </g>
+
+    <!-- Tab 3: Dor -->
+    <g transform="translate(340, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M35 16 C30 16 26 21 26 26 C26 34 35 40 35 40 C35 40 44 34 44 26 C44 21 40 16 35 16 Z" stroke="#94A3B8" stroke-width="2.2" fill="none" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Dor</text>
+    </g>
+
+    <!-- Tab 4: Fisio -->
+    <g transform="translate(490, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M27 30 L32 20 L38 28 L43 23" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Fisio</text>
+    </g>
+
+    <!-- Tab 5: Evolução -->
+    <g transform="translate(635, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M26 33 L32 26 L38 30 L44 20" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Evolução</text>
+    </g>
+
+    <!-- Home Indicator bar -->
+    <rect x="285" y="1312" width="180" height="5" rx="2.5" fill="#CBD5E1" />
+  </g>
+</svg>
+

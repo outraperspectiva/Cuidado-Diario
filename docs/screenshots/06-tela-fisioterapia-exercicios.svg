@@ -1,0 +1,169 @@
+
+<svg width="750" height="1334" viewBox="0 0 750 1334" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#103557" />
+      <stop offset="100%" stop-color="#2B4C6F" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#103557" />
+      <stop offset="100%" stop-color="#2B4C6F" />
+    </linearGradient>
+    <linearGradient id="sosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DC2626" />
+      <stop offset="100%" stop-color="#991B1B" />
+    </linearGradient>
+    <linearGradient id="painGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="35%" stop-color="#F59E0B" />
+      <stop offset="70%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#EF4444" />
+    </linearGradient>
+    <linearGradient id="greenBadge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <filter id="cardGlow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#103557" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="750" height="1334" fill="#F8FAFC" />
+
+  <!-- Top Mobile Status Bar -->
+  <rect width="750" height="54" fill="#103557" />
+  <text x="54" y="36" fill="#FFFFFF" font-size="20" font-weight="600">09:41</text>
+  <circle cx="640" cy="30" r="4" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="654" cy="30" r="5" fill="#FFFFFF" opacity="0.9" />
+  <circle cx="670" cy="30" r="6" fill="#FFFFFF" opacity="0.9" />
+  <!-- Battery -->
+  <rect x="690" y="22" width="34" height="16" rx="4" fill="none" stroke="#FFFFFF" stroke-width="2" />
+  <rect x="694" y="25" width="22" height="10" rx="2" fill="#10B981" />
+  <path d="M725 27 C727 27 728 28 728 30 L728 30 C728 32 727 33 725 33" stroke="#FFFFFF" stroke-width="2" />
+
+  <!-- Top App Bar -->
+  <g transform="translate(0, 54)">
+    <rect width="750" height="85" fill="#103557" />
+    <text x="32" y="52" fill="#FFFFFF" font-size="24" font-weight="700">Fisioterapia &amp; Reabilitação</text>
+    
+    <rect x="530" y="24" width="188" height="42" rx="21" fill="#88C6B0" />
+    <text x="624" y="50" fill="#103557" font-size="14" font-weight="800" text-anchor="middle">+ Prescrição</text>
+  </g>
+
+  <g transform="translate(32, 160)">
+    <!-- Progress Card -->
+    <g filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="130" rx="22" fill="#FFFFFF" />
+      <text x="24" y="38" fill="#0F172A" font-size="18" font-weight="700">Meta Diária de Exercícios</text>
+      <text x="24" y="62" fill="#64748B" font-size="14">1 de 3 exercícios realizados hoje (33%)</text>
+      
+      <rect x="24" y="80" width="638" height="12" rx="6" fill="#E2E8F0" />
+      <rect x="24" y="80" width="210" height="12" rx="6" fill="#10B981" />
+      <text x="638" y="112" fill="#10B981" font-size="13" font-weight="700" text-anchor="end">33% Concluído</text>
+    </g>
+
+    <!-- Exercise 1 (Concluído) -->
+    <g transform="translate(0, 150)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="160" rx="22" fill="#FFFFFF" />
+      <rect x="24" y="24" width="56" height="56" rx="16" fill="#DCFCE7" />
+      <path d="M42 52 L50 60 L62 46" stroke="#16A34A" stroke-width="3.5" fill="none" stroke-linecap="round" />
+
+      <text x="96" y="50" fill="#0F172A" font-size="20" font-weight="700">Alongamento de Coluna Lombar</text>
+      <text x="96" y="74" fill="#64748B" font-size="15">Deitado de barriga para cima, abrace os joelhos</text>
+
+      <rect x="96" y="96" width="130" height="34" rx="8" fill="#F1F5F9" />
+      <text x="161" y="118" fill="#334155" font-size="13" font-weight="600" text-anchor="middle">3 séries de 30 seg</text>
+
+      <rect x="526" y="32" width="136" height="42" rx="21" fill="#DCFCE7" />
+      <text x="594" y="58" fill="#15803D" font-size="14" font-weight="700" text-anchor="middle">✓ Realizado</text>
+    </g>
+
+    <!-- Exercise 2 (Pendente com Timer) -->
+    <g transform="translate(0, 330)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="180" rx="22" fill="#FFFFFF" />
+      <rect x="24" y="24" width="56" height="56" rx="16" fill="#E0F2FE" />
+      <!-- Dumbbell/activity icon -->
+      <circle cx="52" cy="52" r="14" fill="none" stroke="#0284C7" stroke-width="3" />
+      <line x1="42" y1="52" x2="62" y2="52" stroke="#0284C7" stroke-width="3" />
+
+      <text x="96" y="50" fill="#0F172A" font-size="20" font-weight="700">Ponte para Glúteos &amp; Core</text>
+      <text x="96" y="74" fill="#64748B" font-size="15">Elevação pélvica isométrica com contração de 3s</text>
+
+      <rect x="96" y="96" width="145" height="34" rx="8" fill="#F1F5F9" />
+      <text x="168" y="118" fill="#334155" font-size="13" font-weight="600" text-anchor="middle">3 séries de 12 reps</text>
+
+      <!-- Timer Start Button -->
+      <rect x="506" y="30" width="156" height="44" rx="22" fill="#103557" />
+      <text x="584" y="57" fill="#FFFFFF" font-size="14" font-weight="700" text-anchor="middle">▶ Iniciar Timer (45s)</text>
+
+      <rect x="24" y="142" width="638" height="26" rx="6" fill="#F8FAFC" />
+      <text x="36" y="160" fill="#64748B" font-size="12">Orientação: Não prenda a respiração. Mantenha os calcanhares firmes.</text>
+    </g>
+
+    <!-- Exercise 3 (Pendente) -->
+    <g transform="translate(0, 530)" filter="url(#shadow)">
+      <rect x="0" y="0" width="686" height="160" rx="22" fill="#FFFFFF" />
+      <rect x="24" y="24" width="56" height="56" rx="16" fill="#F3E8FF" />
+      <circle cx="52" cy="52" r="14" fill="none" stroke="#7E22CE" stroke-width="3" />
+
+      <text x="96" y="50" fill="#0F172A" font-size="20" font-weight="700">Mobilidade Cervical Suave</text>
+      <text x="96" y="74" fill="#64748B" font-size="15">Inclinação lateral e rotação suave do pescoço</text>
+
+      <rect x="96" y="96" width="130" height="34" rx="8" fill="#F1F5F9" />
+      <text x="161" y="118" fill="#334155" font-size="13" font-weight="600" text-anchor="middle">2 séries de 10 reps</text>
+
+      <rect x="526" y="32" width="136" height="42" rx="21" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5" />
+      <text x="594" y="58" fill="#475569" font-size="14" font-weight="700" text-anchor="middle">Concluir</text>
+    </g>
+  </g>
+
+  
+  <!-- Bottom Navigation Bar -->
+  <g id="bottomNav">
+    <rect x="0" y="1220" width="750" height="114" fill="#FFFFFF" filter="url(#shadow)" />
+    <line x1="0" y1="1220" x2="750" y2="1220" stroke="#E2E8F0" stroke-width="1.5" />
+    
+    <!-- Tab 1: Hoje -->
+    <g transform="translate(45, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M25 28 L35 18 L45 28 M28 25 L28 33 L42 33 L42 25" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Hoje</text>
+    </g>
+
+    <!-- Tab 2: Remédios -->
+    <g transform="translate(190, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <rect x="26" y="19" width="18" height="10" rx="5" transform="rotate(-45 35 24)" stroke="#94A3B8" stroke-width="2.5" fill="none" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Remédios</text>
+    </g>
+
+    <!-- Tab 3: Dor -->
+    <g transform="translate(340, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M35 16 C30 16 26 21 26 26 C26 34 35 40 35 40 C35 40 44 34 44 26 C44 21 40 16 35 16 Z" stroke="#94A3B8" stroke-width="2.2" fill="none" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Dor</text>
+    </g>
+
+    <!-- Tab 4: Fisio -->
+    <g transform="translate(490, 1235)">
+      <circle cx="35" cy="24" r="22" fill="#EBF5FF" />
+      <path d="M27 30 L32 20 L38 28 L43 23" stroke="#103557" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="700" fill="#103557">Fisio</text>
+    </g>
+
+    <!-- Tab 5: Evolução -->
+    <g transform="translate(635, 1235)">
+      <circle cx="35" cy="24" r="22" fill="transparent" />
+      <path d="M26 33 L32 26 L38 30 L44 20" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round" />
+      <text x="35" y="52" text-anchor="middle" font-size="13" font-weight="500" fill="#94A3B8">Evolução</text>
+    </g>
+
+    <!-- Home Indicator bar -->
+    <rect x="285" y="1312" width="180" height="5" rx="2.5" fill="#CBD5E1" />
+  </g>
+</svg>
+

@@ -2,6 +2,29 @@
 
 Aplicativo web completo para acompanhamento diário de saúde, adesão medicamentosa, sessões de fisioterapia, escalas de dor/sintomas e agenda de consultas médicas.
 
+![Visão Geral do Aplicativo Cuidado Diário](docs/screenshots/app-mockup-overview.png)
+
+---
+
+## 📱 Telas do Aplicativo (Screenshots)
+
+As capturas de tela oficiais e vetores do aplicativo estão salvos e versionados neste repositório na pasta [`docs/screenshots/`](./docs/screenshots/) e em [`public/screenshots/`](./public/screenshots/):
+
+| 1. Tela Hoje (Dashboard & Card Azul) | 2. Gestão de Medicamentos & Doses |
+| :---: | :---: |
+| <img src="docs/screenshots/01-tela-hoje-dashboard.png" width="360" alt="Tela Hoje - Dashboard e Card Azul" /> | <img src="docs/screenshots/02-tela-medicamentos.png" width="360" alt="Tela de Medicamentos" /> |
+| **Card Azul com Data formatada**, SOS Crise, progresso diário e remédios do turno. | Controle de horários (08:00, 14:00), alerta de estoque baixo e registro de doses. |
+
+| 3. Registro de Dor & Sintomas (Escala EVA) | 4. Evolução Clínica & Relatórios |
+| :---: | :---: |
+| <img src="docs/screenshots/03-tela-registro-dor.png" width="360" alt="Registro de Dor" /> | <img src="docs/screenshots/04-tela-evolucao-relatorios.png" width="360" alt="Evolução e Relatórios" /> |
+| Régua de dor 0-10, seleção de membros (lombar, joelho) e fatores desencadeantes. | Gráfico semanal de tendência de dor, adesão medicamentosa e exportação para PDF. |
+
+| 5. Autenticação & Modo Visitante | 6. Sessões de Fisioterapia & Reabilitação |
+| :---: | :---: |
+| <img src="docs/screenshots/05-tela-login-autenticacao.png" width="360" alt="Tela de Login" /> | <img src="docs/screenshots/06-tela-fisioterapia-exercicios.png" width="360" alt="Tela de Fisioterapia" /> |
+| Login Google, e-mail/senha e acesso imediato em modo demonstração. | Lista de exercícios prescritos, séries, repetições e timer em tempo real. |
+
 ---
 
 ## 🛠️ Tecnologias Principais
