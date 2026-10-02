@@ -1,3 +1,4 @@
+
 # Cuidado Diário (Melhora) — Gestão de Saúde e Reabilitação
 
 Aplicativo web completo para acompanhamento diário de saúde, adesão medicamentosa, sessões de fisioterapia, escalas de dor/sintomas e agenda de consultas médicas.
@@ -5,7 +6,30 @@ Aplicativo web completo para acompanhamento diário de saúde, adesão medicamen
 ![Visão Geral do Aplicativo Cuidado Diário](docs/screenshots/app-mockup-overview.png)
 
 ---
+## 🌐 Portal do Projeto (Documentação, Regras & Design)
 
+O projeto conta com um **Portal do Projeto** interativo e completo em HTML/CSS/JS puro, acessível tanto no repositório quanto em execução no navegador:
+
+- 🔗 **Arquivo no repositório**: [`docs/portal.html`](./docs/portal.html) (compatível com GitHub Pages em `docs/index.html`)
+- 🌐 **No aplicativo em execução**: [`/portal.html` (servido estaticamente em qualquer ambiente)](https://outraperspectiva.github.io/Cuidado-Diario/)
+- 🚀 **App Publicado na Vercel**: [cuidado-diario.vercel.app](https://cuidado-diario.vercel.app)
+- 📦 **Repositório GitHub**: [github.com/outraperspectiva/Cuidado-Diario](https://github.com/outraperspectiva/Cuidado-Diario)
+
+### Conteúdo do Portal:
+1. **Visão Geral & Simulador Diário**:
+   - Status atual da aplicação, mapa de módulos e papéis de usuário (*Paciente* e *Cuidador*).
+   - **Simulador interativo "Um dia no app"**: teste em tempo real de alteração de estados de doses (Pendente → Tomada → Pulada) e fisioterapia.
+2. **Identidade Visual & Escalas**:
+   - Paleta de cores oficial (Petróleo `#103557`, Verde Cuidador `#88C6B0`, Névoa `#F8FAFC`, Alerta/Crise `#DC2626`) com botão de clique para copiar HEX.
+   - Régua da escala analógica visual de dor de 0 a 10 com cálculo HSL dinâmico.
+   - Especificação tipográfica (Bricolage Grotesque e Public Sans).
+3. **Catálogo de Regras de Negócio (REQ-001 a REQ-050)**:
+   - Filtros por categoria: *Contas*, *Medicamentos*, *Fisioterapia*, *Dor e Sintomas*, *Consultas* e *Privacidade (LGPD)*.
+   - Fluxos de decisão (confirmação de dose e acionamento de SOS Crise) e mapeamento de pontos em aberto.
+4. **Decisões de Arquitetura (ADRs)**:
+   - Registro das decisões de projeto (ADR-001 a ADR-007: React 18, Redux Toolkit, Tailwind, Firebase/PostgreSQL, deploy multinuvem) e template padronizado para novas decisões.
+
+---
 ## 📱 Telas do Aplicativo (Screenshots)
 
 As capturas de tela oficiais e vetores do aplicativo estão salvos e versionados neste repositório na pasta [`docs/screenshots/`](./docs/screenshots/) e em [`public/screenshots/`](./public/screenshots/):
@@ -27,30 +51,6 @@ As capturas de tela oficiais e vetores do aplicativo estão salvos e versionados
 
 ---
 
-## 🌐 Portal do Projeto (Documentação Viva, Regras & Design)
-
-O projeto conta com um **Portal do Projeto** interativo e completo em HTML/CSS/JS puro, acessível tanto no repositório quanto em execução no navegador:
-
-- 🔗 **Arquivo no repositório**: [`docs/portal.html`](./docs/portal.html) (compatível com GitHub Pages em `docs/index.html`)
-- 🌐 **No aplicativo em execução**: `/portal.html` (servido estaticamente em qualquer ambiente)
-- 🚀 **App Publicado na Vercel**: [cuidado-diario.vercel.app](https://cuidado-diario.vercel.app)
-- 📦 **Repositório GitHub**: [github.com/outraperspectiva/Cuidado-Diario](https://github.com/outraperspectiva/Cuidado-Diario)
-
-### Conteúdo do Portal:
-1. **Visão Geral & Simulador Diário**:
-   - Status atual da aplicação, mapa de módulos e papéis de usuário (*Paciente* e *Cuidador*).
-   - **Simulador interativo "Um dia no app"**: teste em tempo real de alteração de estados de doses (Pendente → Tomada → Pulada) e fisioterapia.
-2. **Identidade Visual & Escalas**:
-   - Paleta de cores oficial (Petróleo `#103557`, Verde Cuidador `#88C6B0`, Névoa `#F8FAFC`, Alerta/Crise `#DC2626`) com botão de clique para copiar HEX.
-   - Régua da escala analógica visual de dor de 0 a 10 com cálculo HSL dinâmico.
-   - Especificação tipográfica (Bricolage Grotesque e Public Sans).
-3. **Catálogo de Regras de Negócio (REQ-001 a REQ-050)**:
-   - Filtros por categoria: *Contas*, *Medicamentos*, *Fisioterapia*, *Dor e Sintomas*, *Consultas* e *Privacidade (LGPD)*.
-   - Fluxos de decisão (confirmação de dose e acionamento de SOS Crise) e mapeamento de pontos em aberto.
-4. **Decisões de Arquitetura (ADRs)**:
-   - Registro das decisões de projeto (ADR-001 a ADR-007: React 18, Redux Toolkit, Tailwind, Firebase/PostgreSQL, deploy multinuvem) e template padronizado para novas decisões.
-
----
 
 ## 🛠️ Tecnologias Principais
 
