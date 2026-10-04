@@ -4,12 +4,13 @@
 Aplicativo web completo para acompanhamento diário de saúde, adesão medicamentosa, sessões de fisioterapia, escalas de dor/sintomas e agenda de consultas médicas.
 
 ---
-## 🌐 Portal do Projeto (Documentação, Regras & Design)
+## Portal do Projeto (Documentação, Regras & Design)
 
-O projeto conta com um **Portal do Projeto** interativo e completo em HTML/CSS/JS puro, acessível tanto no repositório quanto em execução no navegador:
+O projeto conta com um **Portal de Gestão**:
 
-- 🌐 **No aplicativo em execução**: [`docs/portal.html` ](https://outraperspectiva.github.io/Cuidado-Diario/)
-- 🚀 **App Publicado na Vercel**: [cuidado-diario.vercel.app](https://cuidado-diario.vercel.app)
+- 🌐 **Acompanhamento para Stakeholders**: [Projeto e Regras de Negócio](https://outraperspectiva.github.io/Cuidado-Diario/)
+- 🚀 **App Publicado**: [cuidado-diario.app](https://cuidado-diario.vercel.app)
+- 📋 **Desenvolvimetno do Projeto no Github**: planejamento e gerenciamento de trabalho [Kamban e Roadmap](https://github.com/users/outraperspectiva/projects/6/views/1)
 
 
 ### Conteúdo do Portal:
