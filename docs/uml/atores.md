@@ -1,3 +1,4 @@
+```mermaid
 flowchart LR
     %% Definição do Ator
     U((Usuário))
@@ -36,3 +37,4 @@ flowchart LR
     classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
     classDef actor fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
     class U actor
+```
