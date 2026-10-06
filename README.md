@@ -15,10 +15,10 @@ O projeto conta com um **Portal de Gestão**:
 
 ### Conteúdo do Portal:
 1. **Visão Geral & Simulador Diário**:
-   - Status atual da aplicação, mapa de módulos e papéis de usuário (*Paciente* e *Cuidador*).
+   - Status atual da aplicação, mapa de módulos e papéis de usuário (*Paciente* ).
    - **Simulador interativo "Um dia no app"**: teste em tempo real de alteração de estados de doses (Pendente → Tomada → Pulada) e fisioterapia.
 2. **Análise de Requisitos**:
-   - **Identidade Visual & Escalas**: paleta de cores oficial (Petróleo `#103557`, Verde Cuidador `#88C6B0`, Névoa `#F8FAFC`, Alerta/Crise `#DC2626`) com botão de clique para copiar HEX, régua da escala analógica visual de dor de 0 a 10 com cálculo HSL dinâmico, especificação tipográfica (Bricolage Grotesque e Public Sans) e galeria das telas oficiais do app.
+   - **Identidade Visual & Escalas**: paleta de cores oficial (Petróleo `#103557`, Verde Paciente `#88C6B0`, Névoa `#F8FAFC`, Alerta/Crise `#DC2626`) com botão de clique para copiar HEX, régua da escala analógica visual de dor de 0 a 10 com cálculo HSL dinâmico, especificação tipográfica (Bricolage Grotesque e Public Sans) e galeria das telas oficiais do app.
    - **Catálogo de Regras de Negócio (REQ-001 a REQ-050)**: filtros por categoria (*Contas*, *Medicamentos*, *Fisioterapia*, *Dor e Sintomas*, *Consultas* e *Privacidade/LGPD*), fluxos de decisão (confirmação de dose e acionamento de SOS Crise) e mapeamento de pontos em aberto.
 3. **Desenvolvimento**:
    - **Projeto (Kanban/Roadmap)**: acompanhamento de novas ideias, subtarefas, documentação e correção de erros (bugs) do projeto no quadro do GitHub.
