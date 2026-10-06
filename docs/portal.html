@@ -58,6 +58,10 @@ p{margin:0}
 .nav a{display:block;padding:10px 12px;border-radius:8px;text-decoration:none;color:var(--ink);font-weight:500;border-left:3px solid transparent}
 .nav a:hover{background:var(--sunken)}
 .nav a[aria-current="page"]{background:var(--brand-soft);color:var(--brand-ink);border-left-color:var(--brand);font-weight:600}
+.nav-group{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.nav-label{padding:8px 12px 2px;font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.nav .nav-sub{padding-left:28px;font-size:.93rem}
+.nav .ext::after{content:" ↗";font-size:.8em;opacity:.65}
 .side-foot{margin-top:auto;display:grid;gap:12px;color:var(--muted);font-size:.85rem}
 .theme{justify-self:start;background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:.85rem}
 .theme:hover{background:var(--sunken)}
@@ -212,6 +216,9 @@ footer.foot{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);co
   .nav{grid-column:1/-1;flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:8px;margin:0 -16px;padding-inline:16px}
   .nav a{white-space:nowrap;border-left:0;border-bottom:3px solid transparent;border-radius:8px 8px 0 0;padding:8px 12px}
   .nav a[aria-current="page"]{border-bottom-color:var(--brand)}
+  .nav-group{display:contents}
+  .nav-label{display:none}
+  .nav .nav-sub{padding-left:12px}
   .side-foot{margin:0}
   .side-foot .stamp{display:none}
   .hero{grid-template-columns:1fr;gap:32px}
@@ -240,10 +247,21 @@ footer.foot{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);co
       <span>Portal do projeto</span>
     </div>
     <nav class="nav" aria-label="Seções do portal">
-      <a href="#visao-geral">Visão geral</a>
-      <a href="#identidade">Identidade visual e telas</a>
-      <a href="#regras">Regras de negócio</a>
-      <a href="#decisoes">Decisões do projeto</a>
+      <a href="#visao-geral">1. Visão geral</a>
+
+      <div class="nav-group">
+        <span class="nav-label">2. Análise de Requisitos</span>
+        <a class="nav-sub" href="#identidade">Identidade visual e telas</a>
+        <a class="nav-sub" href="#regras">Regras de negócio</a>
+      </div>
+
+      <div class="nav-group">
+        <span class="nav-label">3. Desenvolvimento</span>
+        <a class="nav-sub ext" href="https://github.com/users/outraperspectiva/projects/6" target="_blank" rel="noopener">Projeto (Kanban/Roadmap)</a>
+        <a class="nav-sub ext" href="https://github.com/outraperspectiva/Cuidado-Diario/tree/main/docs/uml" target="_blank" rel="noopener">Diagramas UML</a>
+      </div>
+
+      <a href="#decisoes">4. Decisões do projeto</a>
     </nav>
     <div class="side-foot">
       <button class="theme" id="themeBtn" type="button" aria-label="Alternar entre tema claro e escuro">Tema claro/escuro</button>
