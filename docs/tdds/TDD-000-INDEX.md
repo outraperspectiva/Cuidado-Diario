@@ -12,4 +12,5 @@ Documentos de design técnico que descrevem como uma funcionalidade ou component
 
 | ID | Título | Status | Data |
 | --- | --- | --- | --- |
-| _Nenhum documento ainda_ | | | |
+| [TDD-0001](TDD-0001-MODELO-DE-DADOS.md) | Modelo de Dados | Rascunho | 2026-10-07 |
+| [TDD-0002](TDD-0002-DEPLOY-E-AMBIENTES.md) | Deploy e Ambientes | Rascunho | 2026-10-07 |

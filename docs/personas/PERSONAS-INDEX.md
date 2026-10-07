@@ -16,4 +16,5 @@ Cada documento de persona deve cobrir: perfil, objetivos, dores, contexto de uso
 
 | Persona | Documento | Resumo |
 | --- | --- | --- |
-| _Nenhuma persona ainda_ | | |
+| Paciente | [PERSONAS-PACIENTE](PERSONAS-PACIENTE.md) | Pessoa em acompanhamento de saúde ou reabilitação (rascunho) |
+| Cuidador | [PERSONAS-CUIDADOR](PERSONAS-CUIDADOR.md) | Papel previsto no modelo de dados, escopo a confirmar |

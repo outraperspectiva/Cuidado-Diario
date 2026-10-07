@@ -12,4 +12,4 @@ Padrões válidos para todo o projeto. Cada padrão é uma regra obrigatória de
 
 | ID | Título | Status | Data |
 | --- | --- | --- | --- |
-| _Nenhum documento ainda_ | | | |
+| [STD-0001](STD-0001-IDENTIDADE-VISUAL.md) | Identidade Visual e Escalas | Rascunho | 2026-10-07 |

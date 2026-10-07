@@ -12,4 +12,4 @@ Registros de governança. Cada documento é um registro de governança com valor
 
 | ID | Título | Status | Data |
 | --- | --- | --- | --- |
-| _Nenhum documento ainda_ | | | |
+| [GOV-0001](GOV-0001-CANAIS-DO-PROJETO.md) | Canais e Artefatos do Projeto | Rascunho | 2026-10-07 |

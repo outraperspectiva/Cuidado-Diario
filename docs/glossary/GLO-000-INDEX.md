@@ -12,4 +12,4 @@ Vocabulário compartilhado e linguagem ubíqua por domínio.
 
 | ID | Título | Status | Data |
 | --- | --- | --- | --- |
-| _Nenhum documento ainda_ | | | |
+| [GLO-0001](GLO-0001-DOMINIO-SAUDE.md) | Glossário do Domínio de Saúde | Rascunho | 2026-10-07 |
