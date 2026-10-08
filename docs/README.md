@@ -84,6 +84,8 @@ Status: **Rascunho** (em revisão), **Aceito** ou **Ativo**.
 | ID | Título | Status |
 | --- | --- | --- |
 | [GOV-0001](governance/GOV-0001-CANAIS-DO-PROJETO.md) | Canais e Artefatos do Projeto | Rascunho |
+| [GOV-0002](governance/GOV-0002-ROTEIRO-DE-REUNIOES-SCRUM.md) | Roteiro de Reuniões de Acompanhamento (Scrum) | Rascunho |
+| [GOV-0003](governance/GOV-0003-CRONOGRAMA-E-RESPONSABILIDADES.md) | Cronograma e Responsabilidades por Epic e Issue | Rascunho |
 
 ### Políticas (`policies/`) e RFCs (`rfcs/`)
 

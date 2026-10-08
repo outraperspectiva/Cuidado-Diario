@@ -43,8 +43,6 @@ Use a primeira pergunta cuja resposta seja "sim":
 9. Define termos da linguagem do domínio? → **GLO**
 10. Descreve um tipo de usuário ou de parte interessada? → **PERSONAS**
 
-    Uma ordem prática é começar por um glossário, um PRD com as regras de negócio principais e as personas, porque os outros tipos dependem deles.
-    
 ## 4. Regras de Nomenclatura
 
 - Os tipos numerados usam sequência de quatro dígitos com zeros à esquerda: `ADR-0001`, `POL-0012`.
