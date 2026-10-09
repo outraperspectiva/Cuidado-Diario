@@ -10,7 +10,7 @@ O projeto conta com um **Portal de Gestão**:
 - 🌐 **Acompanhamento para Stakeholders**: [Projeto e Regras de Negócio](https://outraperspectiva.github.io/Cuidado-Diario/portal.html)
 - 🚀 **App Publicado**: [cuidado-diario.app](https://cuidado-diario.vercel.app)
 - 📋 **Desenvolvimento do Projeto no GitHub**: planejamento e gerenciamento de trabalho [Kanban e Roadmap](https://github.com/users/outraperspectiva/projects/6/views/1)
-- 📐 **Diagramas UML**: diagramas de arquitetura e fluxo salvos em [`docs/uml/`](./docs/uml/)
+- 📐 **Documentos Técnicos**: Documentação do projeto [`docs/`](./docs/readme.md)
 
 
 ### Conteúdo do Portal:
