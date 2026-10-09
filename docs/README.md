@@ -97,3 +97,27 @@ Ponto de entrada de toda a documentação do projeto e sumário dos documentos p
 | [rfcs/](rfcs/RFC-000-INDEX.md) | Propostas antes da decisão | RFC-XXXX | Proposta antes da decisão |
 | [standards/](standards/STD-000-INDEX.md) | Padrões válidos para todo o projeto | STD-XXXX | Padrão obrigatório de implementação |
 | [tdds/](tdds/TDD-000-INDEX.md) | Documentos de design técnico | TDD-XXXX | Documento de design técnico |
+
+
+## Ordem de Criação Responsabilidades
+
+| Ordem | Tipo | Quem elabora | Quem revisa e aprova | Quando atualizar |
+| --- | --- | --- | --- | --- |
+| 1 | **DOC-000** | Mantenedores | PO | Só se a estrutura mudar, até ser removido |
+| 2 | **GOV** (canais, Scrum, cronograma) | PO, com o Scrum Master | Time todo | Na Retrospectiva e no Planejamento da Sprint |
+| 3 | **PERSONAS** | UX/UI | PO | Quando houver pesquisa com usuários |
+| 4 | **GLO** | PO | Consultor de saúde e Devs | A cada termo novo, no Refinamento |
+| 5 | **PRD** | PO | Consultor de saúde (regra clínica), UX/UI e Devs | A cada decisão de regra, no Refinamento e na Revisão da Sprint |
+| 6 | **POL** (privacidade e LGPD) | Especialista LGPD | PO e Dev backend | Quando a lei, a coleta de dados ou o consentimento mudarem |
+| 7 | **RFC** | Quem tem a dúvida técnica (normalmente um Dev) | Devs, DevOps e PO | Fica fechada após ser aceita ou rejeitada |
+| 8 | **ADR** | Dev frontend, Dev backend ou DevOps, conforme o tema | Devs e PO | Nunca é reescrita. Uma mudança vira um novo ADR |
+| 9 | **TDD** | Dev responsável pela issue | Outro Dev e QA | Junto com a funcionalidade, até a Definição de Pronto |
+| 10 | **STD** | UX/UI (identidade visual), Devs e DevOps (código e deploy) | Devs e QA | Quando uma prática vira regra obrigatória |
+
+A lógica da sequência:
+- **PRD antes de TDD:** cada TDD precisa citar o PRD que implementa.
+- **RFC antes de ADR:** a RFC aceita gera ADR, POL, STD ou TDD.
+- **STD por último:** os padrões nascem das decisões e das práticas que se repetem.
+- **POL de LGPD:** anda em paralelo ao PRD e deve existir antes de coletar dados de usuários em produção.
+
+Quem elabora é responsável por mantê-lo atualizado. A cada sprint, o Planejamento e a Revisão confirmam se algum documento afetado ficou desatualizado, como diz a Definição de Pronto do `GOV-0002`.
