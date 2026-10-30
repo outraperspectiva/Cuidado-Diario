@@ -1,0 +1,45 @@
+@startuml 04-dor-e-sintomas
+title Dor, sintomas e SOS Crise (PRD-0004)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam actor {
+  BackgroundColor #88C6B0
+  BorderColor #103557
+}
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+left to right direction
+
+actor "Paciente" as P
+
+rectangle "Cuidado Diário" {
+  usecase "Registrar dor" as UC1
+  usecase "Informar nível de dor\n(escala de 0 a 10)" as UC2
+  usecase "Informar localização, tipo\ne fatores desencadeantes" as UC3
+  usecase "Marcar registro como crise" as UC4
+  usecase "Acionar SOS Crise" as UC5
+}
+
+P --> UC1
+P --> UC5
+UC1 ..> UC2 : <<include>>
+UC1 ..> UC3 : <<include>>
+UC4 ..> UC1 : <<extend>>
+
+note right of UC5
+  Pontos em aberto: o que o SOS Crise aciona
+  e para quem (D1) e o critério para
+  classificar um registro como crise (D3).
+end note
+@enduml

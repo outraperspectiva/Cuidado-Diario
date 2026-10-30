@@ -1,0 +1,43 @@
+@startuml 07-tela-hoje
+title Tela Hoje (painel diário)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam actor {
+  BackgroundColor #88C6B0
+  BorderColor #103557
+}
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+left to right direction
+
+actor "Paciente" as P
+
+rectangle "Cuidado Diário" {
+  usecase "Ver o painel Hoje" as UC1
+  usecase "Ver card azul\ncom a data" as UC2
+  usecase "Ver progresso diário" as UC3
+  usecase "Ver medicamentos do turno" as UC4
+  usecase "Registrar dose" as UC5
+  usecase "Acionar SOS Crise" as UC6
+}
+
+P --> UC1
+UC1 ..> UC2 : <<include>>
+UC1 ..> UC3 : <<include>>
+UC1 ..> UC4 : <<include>>
+UC5 ..> UC4 : <<extend>>
+UC6 ..> UC1 : <<extend>>
+P --> UC5
+P --> UC6
+@enduml

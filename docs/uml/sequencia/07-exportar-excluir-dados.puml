@@ -1,0 +1,46 @@
+@startuml 07-exportar-excluir-dados
+title Exportar ou excluir os dados do usuário (LGPD)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam sequence {
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantBorderColor #103557
+  ActorBackgroundColor #88C6B0
+  ActorBorderColor #103557
+  LifeLineBorderColor #103557
+  GroupBorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+autonumber
+
+actor Paciente as U
+participant "App (React)" as App
+participant "Provedor de\nautenticação" as Auth
+database "Banco de dados" as DB
+
+U -> App : Abre Privacidade
+alt Exportar meus dados
+  U -> App : Solicita a exportação
+  App -> U : Pede confirmação
+  U -> App : Confirma
+  App -> DB : Lê os dados do usuário
+  DB --> App : Dados
+  App --> U : Entrega o arquivo de exportação
+else Excluir meus dados
+  U -> App : Solicita a exclusão
+  App -> U : Pede confirmação
+  U -> App : Confirma
+  App -> DB : Remove os dados do usuário
+  App -> Auth : Remove a conta
+  App --> U : Confirma a exclusão e encerra a sessão
+end
+
+note right of App
+  Fluxo detalhado definido no epic E8
+  com o especialista em LGPD.
+end note
+@enduml

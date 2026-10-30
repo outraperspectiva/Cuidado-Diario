@@ -1,0 +1,32 @@
+@startuml 01-dose
+title Ciclo de vida de uma dose (IntakeStatus)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  StartColor #103557
+  EndColor #103557
+}
+
+state "Pendente\n(pending)" as P
+state "Tomada\n(taken)" as T
+state "Pulada\n(skipped)" as S
+
+[*] --> P : Dose gerada a partir\ndo horário do medicamento
+P --> T : Paciente registra "Tomada"\n(grava takenTime)
+P --> S : Paciente registra "Pulada"
+T --> [*]
+S --> [*]
+
+note right of P
+  Pontos em aberto (decisão D2):
+  - tratamento de dose atrasada sem registro
+  - possibilidade de desfazer um registro
+end note
+@enduml

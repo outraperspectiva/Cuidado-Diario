@@ -1,0 +1,62 @@
+@startuml 01-medicamentos
+title Medicamentos e doses (PRD-0002)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  HeaderBackgroundColor #D9ECE4
+}
+skinparam enum {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+hide empty members
+
+enum IntakeStatus {
+  pending
+  taken
+  skipped
+}
+class User {
+  uid : string <<PK>>
+}
+class Medication {
+  id : string <<PK>>
+  userId : string <<FK>>
+  name : string
+  dosage : string
+  form : string
+  times : string[]
+  stock : int
+  instructions : string
+}
+class MedicationIntake {
+  id : string <<PK>>
+  medicationId : string <<FK>>
+  scheduledTime : string
+  takenTime : string
+  status : IntakeStatus
+  date : date
+}
+
+User "1" -- "0..*" Medication
+Medication "1" -- "0..*" MedicationIntake : uma dose por horário
+MedicationIntake --> IntakeStatus
+
+note right of Medication
+  Cada horário em "times" gera um registro de dose
+  por dia. O app alerta quando "stock" está baixo.
+end note
+note right of MedicationIntake
+  Fluxo: pending, depois taken ou skipped.
+  Pontos em aberto: valor de "estoque baixo"
+  e doses atrasadas (decisão D2).
+end note
+@enduml

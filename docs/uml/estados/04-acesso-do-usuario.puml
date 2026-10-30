@@ -1,0 +1,40 @@
+@startuml 04-acesso-do-usuario
+title Estados de acesso do usuário
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  StartColor #103557
+  EndColor #103557
+}
+
+state "Não autenticado" as NA
+state "Autenticando" as AU
+state "Aguardando consentimento\n(primeiro acesso)" as CO
+state "Autenticado" as OK
+state "Visitante\n(demonstração)" as VI
+state "Dados excluídos" as EX
+
+[*] --> NA
+NA --> AU : Entrar com Google ou\ne-mail e senha
+NA --> VI : Entrar como visitante
+AU --> NA : Falha na autenticação
+AU --> CO : Primeiro acesso
+AU --> OK : Usuário existente
+CO --> OK : Aceita o consentimento
+OK --> NA : Sai do app
+VI --> NA : Sai do modo visitante
+OK --> EX : Exclui os dados (LGPD)
+EX --> [*]
+
+note right of CO
+  O fluxo de recusa do consentimento
+  será definido no epic E8 (LGPD).
+end note
+@enduml

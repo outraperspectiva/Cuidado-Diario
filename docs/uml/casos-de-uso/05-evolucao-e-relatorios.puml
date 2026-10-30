@@ -1,0 +1,43 @@
+@startuml 05-evolucao-e-relatorios
+title Evolução clínica e relatórios (PRD-0004)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam actor {
+  BackgroundColor #88C6B0
+  BorderColor #103557
+}
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+left to right direction
+
+actor "Paciente" as P
+
+rectangle "Cuidado Diário" {
+  usecase "Ver evolução clínica" as UC1
+  usecase "Ver gráfico semanal\nde dor" as UC2
+  usecase "Ver adesão\nmedicamentosa" as UC3
+  usecase "Exportar relatório em PDF" as UC4
+}
+
+P --> UC1
+P --> UC4
+UC1 ..> UC2 : <<include>>
+UC1 ..> UC3 : <<include>>
+UC4 ..> UC1 : <<include>>
+
+note right of UC4
+  Conteúdo e período do relatório
+  ainda serão definidos (decisão D4).
+end note
+@enduml

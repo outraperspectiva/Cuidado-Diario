@@ -1,0 +1,35 @@
+@startuml 05-sos-crise
+title Acionar SOS Crise
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam sequence {
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantBorderColor #103557
+  ActorBackgroundColor #88C6B0
+  ActorBorderColor #103557
+  LifeLineBorderColor #103557
+  GroupBorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+autonumber
+
+actor Paciente as U
+participant "App (React)" as App
+database "Banco de dados" as DB
+
+U -> App : Toca em "SOS Crise" na tela Hoje
+App -> App : Abre o fluxo de crise
+App -> DB : Registra o evento (isCrisis = true)
+DB --> App : Confirmação
+App --> U : Mostra a orientação de crise
+
+note right of App
+  O que o SOS Crise aciona e para quem
+  ainda está em aberto (decisão D1).
+  O fluxo acima é provisório.
+end note
+@enduml

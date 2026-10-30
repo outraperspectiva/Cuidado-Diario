@@ -1,0 +1,41 @@
+@startuml 03-fisioterapia
+title Fisioterapia e reabilitação (PRD-0003)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam actor {
+  BackgroundColor #88C6B0
+  BorderColor #103557
+}
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+left to right direction
+
+actor "Paciente" as P
+
+rectangle "Cuidado Diário" {
+  usecase "Cadastrar prescrição\nde exercícios" as UC1
+  usecase "Listar exercícios do dia" as UC2
+  usecase "Executar exercício" as UC3
+  usecase "Acompanhar timer\nem tempo real" as UC4
+  usecase "Registrar conclusão\nda sessão" as UC5
+}
+
+P --> UC1
+P --> UC2
+P --> UC3
+P --> UC5
+UC3 ..> UC4 : <<include>>
+UC3 ..> UC2 : <<include>>
+UC5 ..> UC3 : <<include>>
+@enduml

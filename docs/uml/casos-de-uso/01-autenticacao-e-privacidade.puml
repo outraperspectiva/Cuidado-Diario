@@ -1,0 +1,58 @@
+@startuml 01-autenticacao-e-privacidade
+title Autenticação, modo visitante e privacidade (LGPD)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam actor {
+  BackgroundColor #88C6B0
+  BorderColor #103557
+}
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+left to right direction
+
+actor "Visitante" as V
+actor "Paciente" as P
+actor "Provedor de autenticação\n(Google / e-mail)" as AUTH <<sistema>>
+
+rectangle "Cuidado Diário" {
+  usecase "Entrar com Google" as UC1
+  usecase "Entrar com e-mail e senha" as UC2
+  usecase "Usar o modo visitante\n(demonstração)" as UC3
+  usecase "Sair do app" as UC4
+  usecase "Dar consentimento\nno primeiro acesso" as UC5
+  usecase "Exportar meus dados" as UC6
+  usecase "Excluir meus dados" as UC7
+  usecase "Confirmar a ação" as UC8
+}
+
+V --> UC3
+V --> UC1
+V --> UC2
+P --> UC4
+P --> UC5
+P --> UC6
+P --> UC7
+UC1 --> AUTH
+UC2 --> AUTH
+UC1 ..> UC5 : <<include>>
+UC2 ..> UC5 : <<include>>
+UC6 ..> UC8 : <<include>>
+UC7 ..> UC8 : <<include>>
+
+note right of UC5
+  O fluxo de consentimento e a
+  política de privacidade são
+  definidos no epic E8 (LGPD).
+end note
+@enduml

@@ -1,0 +1,52 @@
+@startuml 02-medicamentos
+title Medicamentos (PRD-0002)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam actor {
+  BackgroundColor #88C6B0
+  BorderColor #103557
+}
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+left to right direction
+
+actor "Paciente" as P
+
+rectangle "Cuidado Diário" {
+  usecase "Cadastrar medicamento" as UC1
+  usecase "Editar medicamento" as UC2
+  usecase "Consultar doses do turno" as UC3
+  usecase "Registrar dose como tomada" as UC4
+  usecase "Registrar dose como pulada" as UC5
+  usecase "Registrar dose" as UC6
+  usecase "Gerar doses a partir\ndos horários" as UC7
+  usecase "Alertar estoque baixo" as UC8
+}
+
+P --> UC1
+P --> UC2
+P --> UC3
+P --> UC6
+UC4 --|> UC6
+UC5 --|> UC6
+UC1 ..> UC7 : <<include>>
+UC2 ..> UC7 : <<include>>
+UC6 ..> UC8 : <<extend>>
+
+note right of UC8
+  Pontos em aberto: valor de referência
+  para estoque baixo e tratamento de
+  doses atrasadas (decisão D2).
+end note
+@enduml

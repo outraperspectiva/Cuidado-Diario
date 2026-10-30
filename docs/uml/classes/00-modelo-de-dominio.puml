@@ -1,0 +1,121 @@
+@startuml 00-modelo-de-dominio
+title Modelo de dados (TDD-0001)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  HeaderBackgroundColor #D9ECE4
+}
+skinparam enum {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+hide empty members
+
+enum Role {
+  patient
+  caregiver
+}
+enum IntakeStatus {
+  pending
+  taken
+  skipped
+}
+enum ExecutionStatus {
+  pending
+  completed
+}
+enum AppointmentStatus {
+  scheduled
+  completed
+  canceled
+}
+
+class User {
+  uid : string <<PK>>
+  email : string
+  name : string
+  role : Role
+  createdAt : datetime
+}
+class Medication {
+  id : string <<PK>>
+  userId : string <<FK>>
+  name : string
+  dosage : string
+  form : string
+  times : string[]
+  stock : int
+  instructions : string
+}
+class MedicationIntake {
+  id : string <<PK>>
+  medicationId : string <<FK>>
+  scheduledTime : string
+  takenTime : string
+  status : IntakeStatus
+  date : date
+}
+class PhysiotherapyPrescription {
+  id : string <<PK>>
+  userId : string <<FK>>
+  title : string
+  scheduledTimes : string[]
+  sets : int
+  repetitions : int
+  holdTimeSeconds : int
+}
+class PhysiotherapyExecution {
+  id : string <<PK>>
+  prescriptionId : string <<FK>>
+  sessionNumber : int
+  totalSessions : int
+  scheduledTime : string
+  completedAt : datetime
+  status : ExecutionStatus
+  date : date
+}
+class PainLog {
+  id : string <<PK>>
+  userId : string <<FK>>
+  level : int [0..10]
+  location : string
+  type : string
+  isCrisis : boolean
+  timestamp : datetime
+}
+class Appointment {
+  id : string <<PK>>
+  userId : string <<FK>>
+  doctorName : string
+  specialty : string
+  date : date
+  time : string
+  location : string
+  status : AppointmentStatus
+}
+
+User --> Role
+MedicationIntake --> IntakeStatus
+PhysiotherapyExecution --> ExecutionStatus
+Appointment --> AppointmentStatus
+
+User "1" -- "0..*" Medication : possui
+Medication "1" -- "0..*" MedicationIntake : gera
+User "1" -- "0..*" PhysiotherapyPrescription : possui
+PhysiotherapyPrescription "1" -- "0..*" PhysiotherapyExecution : gera
+User "1" -- "0..*" PainLog : registra
+User "1" -- "0..*" Appointment : agenda
+
+note bottom of PainLog
+  Ponto em aberto: os fatores desencadeantes da dor
+  (PRD-0004) ainda não têm campo neste modelo.
+end note
+@enduml
