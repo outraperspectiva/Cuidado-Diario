@@ -1,0 +1,162 @@
+@startuml 02-store-redux
+title Estado global: store Redux e slices (src/store)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  HeaderBackgroundColor #D9ECE4
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+hide empty members
+
+class store <<configureStore>> {
+  auth : authReducer
+  pain : painReducer
+  medications : medicationReducer
+  sleep : sleepReducer
+  exercise : exerciseReducer
+  appointments : appointmentReducer
+  ui : uiReducer
+}
+class authSlice <<slice>> {
+  user : UserProfile | null
+  isAuthenticated : boolean
+  isLoading : boolean
+  error : string | null
+  --
+  setLoading(boolean)
+  setError(string | null)
+  loginSuccess(UserProfile)
+  logout()
+  updateProfile(Partial<UserProfile>)
+}
+class painSlice <<slice>> {
+  logs : PainLog[]
+  selectedLog : PainLog | null
+  currentDraft : rascunho do registro de dor
+  isLoading : boolean
+  error : string | null
+  --
+  setPainDraftLevel(PainLevel)
+  setPainDraftType(painType)
+  toggleBodyLocation(BodyPart)
+  toggleTrigger(string)
+  toggleReliefAction(string)
+  setDraftNotes(string)
+  setDraftFlareUp(boolean)
+  resetDraft()
+  addPainLog(PainLog)
+  updatePainLog(PainLog)
+  deletePainLog(string)
+  setSelectedLog(PainLog | null)
+  setUserPainLogs(PainLog[])
+  resetPainLogs()
+}
+class medicationSlice <<slice>> {
+  medications : Medication[]
+  todayIntakes : MedicationIntake[]
+  isLoading : boolean
+  error : string | null
+  --
+  addMedication(Medication)
+  updateMedication(Medication)
+  deleteMedication(string)
+  toggleIntakeStatus({id, status?})
+  setUserMedications({medications, todayIntakes})
+  resetMedications()
+}
+class exerciseSlice <<slice>> {
+  logs : ExerciseLog[]
+  prescriptions : PhysiotherapyPrescription[]
+  todayExecutions : PhysiotherapyExecution[]
+  historyExecutions : PhysiotherapyExecution[]
+  isLoading : boolean
+  error : string | null
+  --
+  addExerciseLog(ExerciseLog)
+  updateExerciseLog(ExerciseLog)
+  deleteExerciseLog(string)
+  addPhysioPrescription(PhysiotherapyPrescription)
+  updatePhysioPrescription(PhysiotherapyPrescription)
+  deletePhysioPrescription(string)
+  togglePhysioExecutionStatus(...)
+  setUserExerciseLogs(ExerciseLog[])
+  setUserExerciseData({...})
+  resetExerciseLogs()
+}
+class sleepSlice <<slice>> {
+  logs : SleepLog[]
+  isLoading : boolean
+  error : string | null
+  --
+  addSleepLog(SleepLog)
+  updateSleepLog(SleepLog)
+  deleteSleepLog(string)
+  setUserSleepLogs(SleepLog[])
+  resetSleepLogs()
+}
+class appointmentSlice <<slice>> {
+  appointments : MedicalAppointment[]
+  isLoading : boolean
+  error : string | null
+  --
+  addAppointment(MedicalAppointment)
+  updateAppointmentStatus({...})
+  deleteAppointment(string)
+  setUserAppointments(MedicalAppointment[])
+  resetAppointments()
+}
+class uiSlice <<slice>> {
+  activeTab : hoje | dor | medicamentos | atividades | evolucao | perfil
+  isMobileFrame : boolean
+  isQuickSosOpen : boolean
+  isAddMedicationOpen : boolean
+  isAddPainLogOpen : boolean
+  isAddSleepOpen : boolean
+  isAddExerciseOpen : boolean
+  isAddAppointmentOpen : boolean
+  isAppointmentsModalOpen : boolean
+  isQuickIntakeModalOpen : boolean
+  isQuickPhysioModalOpen : boolean
+  toastMessage : string | null
+  toastType : success | info | warning | error
+  --
+  setActiveTab(AppTab)
+  toggleMobileFrame()
+  setMobileFrame(boolean)
+  setQuickSosOpen(boolean)
+  setAddMedicationOpen(boolean)
+  setAddPainLogOpen(boolean)
+  setAddSleepOpen(boolean)
+  setAddExerciseOpen(boolean)
+  setAddAppointmentOpen(boolean)
+  setAppointmentsModalOpen(boolean)
+  setQuickIntakeModalOpen(boolean)
+  setQuickPhysioModalOpen(boolean)
+  showToast({message, type?})
+  hideToast()
+}
+
+store *-- authSlice : auth
+store *-- painSlice : pain
+store *-- medicationSlice : medications
+store *-- exerciseSlice : exercise
+store *-- sleepSlice : sleep
+store *-- appointmentSlice : appointments
+store *-- uiSlice : ui
+
+note bottom of store
+  Hooks tipados: useAppDispatch e useAppSelector.
+  O middleware desativa o serializableCheck.
+end note
+@enduml

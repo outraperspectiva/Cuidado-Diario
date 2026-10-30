@@ -1,0 +1,135 @@
+@startuml 04-telas-e-dependencias
+title Telas, modais e suas dependências (src/components)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  HeaderBackgroundColor #D9ECE4
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+hide members
+left to right direction
+class App <<componente raiz>>
+package "Telas (abas)" {
+  class ActivitiesScreen <<tela>>
+  class EvolutionScreen <<tela>>
+  class HomeScreen <<tela>>
+  class LoginScreen <<tela>>
+  class MedicationScreen <<tela>>
+  class PainScreen <<tela>>
+  class ProfileScreen <<tela>>
+}
+package "Modais e componentes" {
+  class PhysiotherapyDetailsModal <<modal>>
+  class QuickPhysioActivitiesModal <<modal>>
+  class AddAppointmentModal <<modal>>
+  class AppointmentsOverviewModal <<modal>>
+  class AuthModal <<modal>>
+  class LogoutConfirmModal <<modal>>
+  class ActivityTabIcon <<componente>>
+  class BottomNav <<componente>>
+  class CuidadoDiarioLogo <<componente>>
+  class Header <<componente>>
+  class MelhoraLogo <<componente>>
+  class Toast <<componente>>
+  class AppointmentsAgendaSection <<componente>>
+  class PhysioAdherenceChart <<componente>>
+  class QuickMedicationIntakeModal <<modal>>
+  class AddPainLogModal <<modal>>
+  class BodyMap <<componente>>
+  class PainScaleSelector <<componente>>
+  class QuickSosModal <<modal>>
+}
+package "Estado (Redux)" {
+  class authSlice <<slice>>
+  class painSlice <<slice>>
+  class medicationSlice <<slice>>
+  class sleepSlice <<slice>>
+  class exerciseSlice <<slice>>
+  class appointmentSlice <<slice>>
+  class uiSlice <<slice>>
+}
+package "Serviços" {
+  class AnalyticsService <<service>>
+  class AppointmentService <<service>>
+  class AuthService <<service>>
+  class ExerciseService <<service>>
+  class MedicationService <<service>>
+  class PainService <<service>>
+  class PhysiotherapyService <<service>>
+  class SleepService <<service>>
+}
+class UserDataSync <<service>>
+App --> ActivitiesScreen : aba ativa
+App --> EvolutionScreen : aba ativa
+App --> HomeScreen : aba ativa
+App --> LoginScreen : aba ativa
+App --> MedicationScreen : aba ativa
+App --> PainScreen : aba ativa
+App --> ProfileScreen : aba ativa
+App --> AddPainLogModal
+App --> QuickSosModal
+App --> AddAppointmentModal
+App --> AppointmentsOverviewModal
+App --> QuickMedicationIntakeModal
+App --> QuickPhysioActivitiesModal
+App --> AuthModal
+App --> LogoutConfirmModal
+App --> Header
+App --> BottomNav
+App --> Toast
+App ..> UserDataSync : sincroniza ao logar
+QuickPhysioActivitiesModal ..> PhysiotherapyService
+QuickPhysioActivitiesModal ..> exerciseSlice
+AddAppointmentModal ..> AppointmentService
+AddAppointmentModal ..> appointmentSlice
+AppointmentsOverviewModal ..> AppointmentService
+AppointmentsOverviewModal ..> appointmentSlice
+AuthModal ..> AuthService
+AuthModal ..> authSlice
+AppointmentsAgendaSection ..> AppointmentService
+AppointmentsAgendaSection ..> appointmentSlice
+PhysioAdherenceChart ..> AnalyticsService
+QuickMedicationIntakeModal ..> MedicationService
+QuickMedicationIntakeModal ..> medicationSlice
+AddPainLogModal ..> PainService
+AddPainLogModal ..> painSlice
+BodyMap ..> PainService
+PainScaleSelector ..> PainService
+QuickSosModal ..> AppointmentService
+QuickSosModal ..> PainService
+QuickSosModal ..> appointmentSlice
+QuickSosModal ..> painSlice
+ActivitiesScreen ..> ExerciseService
+ActivitiesScreen ..> PhysiotherapyService
+ActivitiesScreen ..> SleepService
+ActivitiesScreen ..> exerciseSlice
+ActivitiesScreen ..> sleepSlice
+EvolutionScreen ..> AnalyticsService
+EvolutionScreen ..> PainService
+HomeScreen ..> PainService
+HomeScreen ..> PhysiotherapyService
+HomeScreen ..> exerciseSlice
+HomeScreen ..> medicationSlice
+LoginScreen ..> AuthService
+LoginScreen ..> authSlice
+MedicationScreen ..> MedicationService
+MedicationScreen ..> medicationSlice
+PainScreen ..> PainService
+PainScreen ..> painSlice
+ProfileScreen ..> authSlice
+note bottom of App
+  Setas tracejadas: dependências por importação (slices e serviços).
+  Quase todas as telas, modais e componentes também usam o uiSlice
+  (abas, abertura de modais e avisos), omitido para simplificar.
+end note
+@enduml

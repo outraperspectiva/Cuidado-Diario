@@ -1,0 +1,113 @@
+@startuml 03-servicos
+title Serviços e persistência (src/services)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  HeaderBackgroundColor #D9ECE4
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+hide empty members
+left to right direction
+
+class LocalPersistenceRepository <<repositório>> {
+  {static} get<T>(collection, userId, fallback) : T[]
+  {static} save<T>(collection, userId, items) : void
+  {static} clearUserCollections(userId) : void
+  {static} getAllUsers() : UserProfile[]
+  {static} getUserByEmail(email) : UserProfile | null
+  {static} getUserById(uid) : UserProfile | null
+  {static} saveUserProfile(profile) : void
+  {static} getOrCreateUserProfile(data) : {profile, isNewAccount}
+  {static} getActiveUser() : UserProfile | null
+  {static} setActiveUser(profile) : void
+}
+class AuthService <<service>> {
+  {static} validateEmail(email) : boolean
+  {static} evaluatePasswordStrength(password) : PasswordStrength
+  {static} validateLoginForm(data) : ValidationResult
+  {static} validateRegistrationForm(data) : ValidationResult
+  {static} loginWithGoogle(email?, name?, avatar?) : Promise<UserProfile>
+  {static} login(email, password) : Promise<UserProfile>
+  {static} register(name, email, password) : Promise<UserProfile>
+  {static} logout() : Promise<void>
+}
+class PainService <<service>> {
+  {static} getSeverityCategory(level) : SeverityCategory
+  {static} getSeverityColor(category) : string
+  {static} getSeverityLabel(category) : string
+  {static} createLog(userId, data) : Promise<PainLog>
+  {static} getLogs(userId, fallbackLogs) : Promise<PainLog[]>
+  {static} updateLog(userId, logId, updates) : Promise<PainLog>
+  {static} deleteLog(userId, logId) : Promise<boolean>
+}
+class MedicationService <<service>> {
+  {static} getMedications(userId, fallback) : Promise<Medication[]>
+  {static} createMedication(userId, data) : Promise<Medication>
+  {static} deleteMedication(userId, medId) : Promise<void>
+  {static} toggleIntake(userId, intakeId, currentStatus) : Promise<status>
+}
+class SleepService <<service>> {
+  {static} getSleepLogs(userId, fallback) : Promise<SleepLog[]>
+  {static} createSleepLog(userId, data) : Promise<SleepLog>
+  {static} deleteSleepLog(userId, id) : Promise<void>
+}
+class ExerciseService <<service>> {
+  {static} getExerciseLogs(userId, fallback) : Promise<ExerciseLog[]>
+  {static} createExerciseLog(userId, data) : Promise<ExerciseLog>
+  {static} deleteExerciseLog(userId, id) : Promise<void>
+}
+class PhysiotherapyService <<service>> {
+  {static} getPrescriptions(userId, fallback) : Promise<PhysiotherapyPrescription[]>
+  {static} createPrescription(userId, data) : Promise<PhysiotherapyPrescription>
+  {static} deletePrescription(userId, id) : Promise<void>
+  {static} getExecutions(userId, fallback) : Promise<PhysiotherapyExecution[]>
+  {static} saveExecutions(userId, executions) : Promise<void>
+  {static} toggleExecution(userId, executionId) : Promise<PhysiotherapyExecution | null>
+}
+class AppointmentService <<service>> {
+  {static} getAppointments(userId, fallback) : Promise<MedicalAppointment[]>
+  {static} createAppointment(userId, data) : Promise<MedicalAppointment>
+  {static} updateStatus(userId, appointmentId, status) : Promise<void>
+  {static} deleteAppointment(userId, appointmentId) : Promise<void>
+}
+class AnalyticsService <<service>> {
+  {static} computeSummary(...) : ClinicalEvolutionSummary
+  {static} computePhysioAdherence(...) : PhysioPeriodSummary
+}
+class UserDataSync <<service>> {
+  {static} syncUserDatabaseToStore(dispatch, user) : void
+  {static} clearStore(dispatch) : void
+}
+class store <<Redux>>
+
+AuthService ..> LocalPersistenceRepository
+PainService ..> LocalPersistenceRepository
+MedicationService ..> LocalPersistenceRepository
+SleepService ..> LocalPersistenceRepository
+ExerciseService ..> LocalPersistenceRepository
+PhysiotherapyService ..> LocalPersistenceRepository
+AppointmentService ..> LocalPersistenceRepository
+UserDataSync ..> LocalPersistenceRepository : lê as coleções
+UserDataSync ..> store : dispatch(set...)
+
+note bottom of LocalPersistenceRepository
+  Persistência atual: armazenamento local do navegador,
+  com uma coleção por usuário. O pacote "firebase" não
+  consta nas dependências do projeto.
+end note
+note bottom of AuthService
+  Login com Google, e-mail e senha e conta de demonstração
+  são resolvidos localmente, sem provedor externo.
+end note
+@enduml

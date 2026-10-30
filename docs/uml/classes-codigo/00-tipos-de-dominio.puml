@@ -1,0 +1,180 @@
+@startuml 00-tipos-de-dominio
+title Tipos de domínio (src/types/index.ts)
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  HeaderBackgroundColor #D9ECE4
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+hide empty members
+
+class UserProfile <<interface>> {
+  uid : string
+  name : string
+  email : string
+  avatarUrl? : string
+  authProvider? : 'google' | 'email' | 'demo'
+  birthDate? : string
+  diagnosis? : string[]
+  emergencyContact? : EmergencyContact
+  createdAt : string
+  updatedAt : string
+}
+class EmergencyContact <<objeto>> {
+  name : string
+  phone : string
+  relationship : string
+}
+class PainLog <<interface>> {
+  id : string
+  userId : string
+  timestamp : string
+  painLevel : PainLevel (0 a 10)
+  severityCategory : SeverityCategory
+  painType : pulsatil | em_pontada | queimacao\n| constante | latejante | pressao
+  bodyLocations : BodyPart[]
+  triggers : string[]
+  reliefActions : string[]
+  notes? : string
+  associatedMedications? : string[]
+  isFlareUp? : boolean
+}
+class Medication <<interface>> {
+  id : string
+  userId : string
+  name : string
+  dosage : string
+  category : analgesico | antiinflamatorio | neuropatico\n| relaxante_muscular | suplemento | outro
+  scheduledTimes : string[]
+  instructions? : string
+  isActive : boolean
+  prescribedBy? : string
+  createdAt : string
+  isChronic? : boolean
+  dosesPerDay? : number
+  durationDays? : number
+  startDate? : string
+  endDate? : string
+}
+class MedicationIntake <<interface>> {
+  id : string
+  userId : string
+  medicationId : string
+  medicationName : string
+  dosage : string
+  scheduledTime : string
+  takenAt? : string
+  status : taken | skipped | pending
+  date : string
+}
+class PhysiotherapyPrescription <<interface>> {
+  id : string
+  userId : string
+  title : string
+  isChronic? : boolean
+  timesPerDay : number
+  durationDays : number
+  scheduledTimes : string[]
+  instructions? : string
+  prescribedBy? : string
+  isActive : boolean
+  startDate : string
+  endDate? : string
+  createdAt : string
+  physiotherapyDetails? : Partial<PhysiotherapyDetails>
+}
+class PhysiotherapyDetails <<interface>> {
+  upperLimbExercises : PhysiotherapyUpperLimbExercise[]
+  laterality : bilateral | direito | esquerdo
+  sets : number
+  repetitions : number
+  holdTimeSeconds : number
+  painDuring : number
+  painAfter : number
+  sensationType : PhysiotherapySensation
+  perceivedEffort : PhysiotherapyPerceivedEffort
+  comments? : string
+}
+class PhysiotherapyExecution <<interface>> {
+  id : string
+  userId : string
+  prescriptionId : string
+  prescriptionTitle : string
+  scheduledTime : string
+  sessionNumber : number
+  totalSessions : number
+  status : pending | completed
+  completedAt? : string
+  date : string
+  exerciseLogId? : string
+}
+class ExerciseLog <<interface>> {
+  id : string
+  userId : string
+  date : string
+  activityType : caminhada | alongamento | fisioterapia | yoga\n| pilates | hidroginastica | musculacao | outro
+  durationMinutes : number
+  intensity : leve | moderada | intensa
+  painImpact : aliviou | neutro | aumentou_dor
+  notes? : string
+  physiotherapyDetails? : PhysiotherapyDetails
+}
+class SleepLog <<interface>> {
+  id : string
+  userId : string
+  date : string
+  durationHours : number
+  durationMinutes : number
+  qualityRating : 1 a 5
+  wakeUpsCount : number
+  sleepTime : string
+  wakeTime : string
+  disruptions : string[]
+  restedScore : number (0 a 100)
+  notes? : string
+}
+class MedicalAppointment <<interface>> {
+  id : string
+  userId : string
+  doctorName : string
+  specialty : string
+  date : string
+  time : string
+  locationType : presencial | telemedicina
+  clinicOrHospital? : string
+  reason? : string
+  status : agendada | realizada | cancelada
+  isUrgent? : boolean
+  notes? : string
+  createdAt : string
+}
+
+UserProfile *-- EmergencyContact
+UserProfile "1" -- "0..*" PainLog : userId
+UserProfile "1" -- "0..*" Medication : userId
+UserProfile "1" -- "0..*" PhysiotherapyPrescription : userId
+UserProfile "1" -- "0..*" ExerciseLog : userId
+UserProfile "1" -- "0..*" SleepLog : userId
+UserProfile "1" -- "0..*" MedicalAppointment : userId
+Medication "1" -- "0..*" MedicationIntake : medicationId
+PhysiotherapyPrescription "1" -- "0..*" PhysiotherapyExecution : prescriptionId
+PhysiotherapyPrescription o-- "0..1" PhysiotherapyDetails
+ExerciseLog o-- "0..1" PhysiotherapyDetails
+PhysiotherapyExecution ..> ExerciseLog : exerciseLogId
+
+note bottom of UserProfile
+  Não há campo de papel (role): o código atual
+  não distingue paciente e cuidador.
+end note
+@enduml

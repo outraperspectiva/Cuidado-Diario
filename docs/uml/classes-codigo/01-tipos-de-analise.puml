@@ -1,0 +1,79 @@
+@startuml 01-tipos-de-analise
+title Tipos de análise e evolução clínica
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #F8FAFC
+  BorderColor #103557
+  HeaderBackgroundColor #D9ECE4
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+hide empty members
+
+class ClinicalEvolutionSummary <<interface>> {
+  weekPeriod : string
+  averagePain : number
+  painTrend : diminuindo | estavel | aumentando
+  totalFlareUps : number
+  avgSleepHours : number
+  exerciseMinutesTotal : number
+  medicationAdherencePercent : number
+  physioAdherencePercent : number
+  topTriggers : {trigger, count}[]
+  mostAffectedAreas : {bodyPart, count}[]
+}
+class PhysioPeriodSummary <<interface>> {
+  periodDays : number
+  dailyData : DailyPhysioAdherence[]
+  overallPercentage : number
+  totalPlanned : number
+  totalCompleted : number
+  daysWithFullAdherence : number
+  totalExerciseMinutes : number
+  adherenceRating : excelente | boa | moderada | baixa
+}
+class DailyPhysioAdherence <<interface>> {
+  date : string
+  dayLabel : string
+  shortDate : string
+  plannedCount : number
+  completedCount : number
+  percentage : number
+  exerciseMinutes : number
+  status : completo | parcial | nao_realizado | sem_prescricao
+}
+class AnalyticsService <<service>> {
+  {static} computeSummary(painLogs, sleepLogs, exerciseLogs,\n  intakes, todayExecutions, historyExecutions,\n  prescriptions) : ClinicalEvolutionSummary
+  {static} computePhysioAdherence(prescriptions, todayExecutions,\n  historyExecutions, exerciseLogs, periodDays) : PhysioPeriodSummary
+}
+class PainLog
+class SleepLog
+class ExerciseLog
+class MedicationIntake
+class PhysiotherapyExecution
+class PhysiotherapyPrescription
+
+PhysioPeriodSummary "1" *-- "0..*" DailyPhysioAdherence
+AnalyticsService ..> ClinicalEvolutionSummary : retorna
+AnalyticsService ..> PhysioPeriodSummary : retorna
+AnalyticsService ..> PainLog
+AnalyticsService ..> SleepLog
+AnalyticsService ..> ExerciseLog
+AnalyticsService ..> MedicationIntake
+AnalyticsService ..> PhysiotherapyExecution
+AnalyticsService ..> PhysiotherapyPrescription
+
+note bottom of ClinicalEvolutionSummary
+  Resumos calculados em memória a partir dos
+  registros. Não são gravados no armazenamento.
+end note
+@enduml
