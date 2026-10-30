@@ -17,7 +17,7 @@ Eles complementam os diagramas de [`../classes/`](../classes/README.md), que vê
 ## Convenções
 
 - Os tipos TypeScript (`interface`) aparecem como classes com o estereótipo `<<interface>>`.
-- Os slices do Redux Toolkit aparecem como classes `<<slice>>`: os atributos são o estado, e os métodos são as ações (reducers).
+- Os slices do Redux Toolkit aparecem como classes `<<slice>>`. A seção **Estado** traz os dados da fatia, e a seção **Ações (reducers)** traz as funções que os componentes disparam com `dispatch`. Não são métodos de objetos. O fluxo completo está no diagrama de sequência [09](../sequencia/09-fluxo-redux-registrar-dose.puml).
 - Os serviços são classes com métodos estáticos (`{static}`).
 - No diagrama 04, as setas tracejadas indicam dependência por importação. As ligações com o `uiSlice` foram omitidas, porque quase todos os componentes o usam.
 
@@ -40,6 +40,14 @@ Ao ler o código, apareceram diferenças em relação aos documentos deste repos
 | SOS Crise | Comportamento em aberto (decisão D1) | Registra uma dor com `isFlareUp`, pode agendar uma consulta urgente e mostra o contato de emergência com link de ligação |
 
 Os PRDs, o TDD-0001, os ADRs e os diagramas de caso de uso, sequência e estados foram escritos antes da leitura do código. Eles precisam ser atualizados para refletir esta tabela.
+
+## Pontos de atenção observados no código
+
+Ao desenhar o fluxo de uma dose, apareceram pontos que merecem ser conferidos executando o app:
+
+- O `MedicationService` grava as doses na coleção `medication_intakes`, e o `UserDataSync` lê a coleção `intakes` ao entrar. Pelo código, o estado de uma dose pode não sobreviver ao recarregar a página.
+- Na `MedicationScreen`, a dose é marcada só no Redux (`dispatch(toggleIntakeStatus(...))`), sem chamar o `MedicationService`.
+- O tipo da dose aceita `skipped`, mas as telas só alternam entre `taken` e `pending`.
 
 ## Observação sobre dados de demonstração
 

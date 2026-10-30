@@ -99,7 +99,7 @@ Nenhum documento ainda. Ver [POL-000](policies/POL-000-INDEX.md) e [RFC-000](rfc
 | [`uml/casos-de-uso/`](uml/casos-de-uso/README.md) | Diagramas de caso de uso em PlantUML (8 diagramas) |
 | [`uml/classes/`](uml/classes/README.md) | Diagramas de classes em PlantUML (4 diagramas) |
 | [`uml/classes-codigo/`](uml/classes-codigo/README.md) | Diagramas de classes extraídos do código em `src/` (5 diagramas) |
-| [`uml/sequencia/`](uml/sequencia/README.md) | Diagramas de sequência em PlantUML (8 diagramas) |
+| [`uml/sequencia/`](uml/sequencia/README.md) | Diagramas de sequência em PlantUML (9 diagramas) |
 | [`uml/estados/`](uml/estados/README.md) | Diagramas de estados em PlantUML (5 diagramas) |
 | [`uml/componentes-e-implantacao/`](uml/componentes-e-implantacao/README.md) | Diagramas de componentes e de implantação em PlantUML (4 diagramas) |
 | `screenshots/` | Capturas oficiais das telas do app |

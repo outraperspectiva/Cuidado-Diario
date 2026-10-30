@@ -1,0 +1,54 @@
+@startuml 09-fluxo-redux-registrar-dose
+title Fluxo Redux no código: marcar dose no modal rápido
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #103557
+skinparam sequence {
+  ParticipantBackgroundColor #F8FAFC
+  ParticipantBorderColor #103557
+  ActorBackgroundColor #88C6B0
+  ActorBorderColor #103557
+  LifeLineBorderColor #103557
+  GroupBorderColor #103557
+}
+skinparam note {
+  BackgroundColor #FEF3C7
+  BorderColor #F59E0B
+}
+autonumber
+
+actor Usuário as U
+participant "QuickMedicationIntakeModal\n(componente)" as C
+participant "store\n(Redux)" as S
+participant "medicationSlice\n(reducer)" as R
+participant "MedicationService" as SV
+database "LocalPersistenceRepository\n(localStorage)" as DB
+
+U -> C : Toca na dose
+C -> S : dispatch(toggleIntakeStatus({ id }))
+S -> R : toggleIntakeStatus(state, action)
+R -> R : Alterna taken e pending\ne grava ou limpa takenAt
+R --> S : Novo estado (todayIntakes)
+S --> C : useAppSelector notifica e a tela é redesenhada
+C -> SV : toggleIntake(userId, intakeId, currentStatus)
+SV -> DB : get("medication_intakes", userId, [])
+DB --> SV : Lista de doses gravadas
+alt Dose encontrada na lista
+  SV -> DB : save("medication_intakes", userId, doses)
+else Lista vazia ou sem a dose
+  SV --> SV : Nada é gravado
+end
+SV --> C : Próximo status
+C -> S : dispatch(showToast({ message }))
+S --> C : Aviso exibido na tela
+
+note right of DB
+  Pelo código, o carregamento ao entrar (UserDataSync)
+  lê a coleção "intakes", e o serviço usa "medication_intakes".
+  Confirme se a mudança de dose sobrevive ao recarregar a página.
+end note
+note left of C
+  Na MedicationScreen, a mesma ação é disparada
+  só no Redux, sem chamar o MedicationService.
+end note
+@enduml

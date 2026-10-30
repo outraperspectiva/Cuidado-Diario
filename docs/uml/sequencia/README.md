@@ -14,6 +14,7 @@ Diagramas de sequência dos principais fluxos do Cuidado Diário, escritos em [P
 | 06 | Exportar relatório em PDF | [06-exportar-relatorio.puml](06-exportar-relatorio.puml) | ![Exportar relatório](img/06-exportar-relatorio.png) | [PRD-0004](../../products/PRD-0004-DOR-E-SINTOMAS.md) |
 | 07 | Exportar ou excluir dados (LGPD) | [07-exportar-excluir-dados.puml](07-exportar-excluir-dados.puml) | ![LGPD](img/07-exportar-excluir-dados.png) | [PRD-0001](../../products/PRD-0001-VISAO-GERAL-DO-PRODUTO.md) |
 | 08 | Cadastrar consulta e alterar status | [08-gerenciar-consulta.puml](08-gerenciar-consulta.puml) | ![Consultas](img/08-gerenciar-consulta.png) | [PRD-0005](../../products/PRD-0005-CONSULTAS.md) |
+| 09 | Fluxo Redux no código: marcar dose no modal rápido | [09-fluxo-redux-registrar-dose.puml](09-fluxo-redux-registrar-dose.puml) | ![Fluxo Redux](img/09-fluxo-redux-registrar-dose.png) | `src/components/medications/QuickMedicationIntakeModal.tsx`, `src/store/slices/medicationSlice.ts` e `src/services/medicationService.ts` |
 
 ## Participantes
 
@@ -27,7 +28,7 @@ Diagramas de sequência dos principais fluxos do Cuidado Diário, escritos em [P
 
 ## Observações
 
-- Os fluxos foram montados a partir dos PRDs e do modelo de dados, e não do código do app. Revise-os com quem conhece a implementação.
+- Os fluxos 01 a 08 foram montados a partir dos PRDs e do modelo de dados, e não do código do app. Revise-os com quem conhece a implementação. O fluxo 09 foi extraído do código real.
 - O banco de dados aparece de forma genérica porque a persistência é adaptável.
 - Notas amarelas indicam pontos em aberto, como o que o SOS Crise aciona (decisão D1).
 

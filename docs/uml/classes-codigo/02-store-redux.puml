@@ -29,11 +29,12 @@ class store <<configureStore>> {
   ui : uiReducer
 }
 class authSlice <<slice>> {
+  == Estado ==
   user : UserProfile | null
   isAuthenticated : boolean
   isLoading : boolean
   error : string | null
-  --
+  == Ações (reducers) ==
   setLoading(boolean)
   setError(string | null)
   loginSuccess(UserProfile)
@@ -41,12 +42,13 @@ class authSlice <<slice>> {
   updateProfile(Partial<UserProfile>)
 }
 class painSlice <<slice>> {
+  == Estado ==
   logs : PainLog[]
   selectedLog : PainLog | null
   currentDraft : rascunho do registro de dor
   isLoading : boolean
   error : string | null
-  --
+  == Ações (reducers) ==
   setPainDraftLevel(PainLevel)
   setPainDraftType(painType)
   toggleBodyLocation(BodyPart)
@@ -63,11 +65,12 @@ class painSlice <<slice>> {
   resetPainLogs()
 }
 class medicationSlice <<slice>> {
+  == Estado ==
   medications : Medication[]
   todayIntakes : MedicationIntake[]
   isLoading : boolean
   error : string | null
-  --
+  == Ações (reducers) ==
   addMedication(Medication)
   updateMedication(Medication)
   deleteMedication(string)
@@ -76,13 +79,14 @@ class medicationSlice <<slice>> {
   resetMedications()
 }
 class exerciseSlice <<slice>> {
+  == Estado ==
   logs : ExerciseLog[]
   prescriptions : PhysiotherapyPrescription[]
   todayExecutions : PhysiotherapyExecution[]
   historyExecutions : PhysiotherapyExecution[]
   isLoading : boolean
   error : string | null
-  --
+  == Ações (reducers) ==
   addExerciseLog(ExerciseLog)
   updateExerciseLog(ExerciseLog)
   deleteExerciseLog(string)
@@ -95,10 +99,11 @@ class exerciseSlice <<slice>> {
   resetExerciseLogs()
 }
 class sleepSlice <<slice>> {
+  == Estado ==
   logs : SleepLog[]
   isLoading : boolean
   error : string | null
-  --
+  == Ações (reducers) ==
   addSleepLog(SleepLog)
   updateSleepLog(SleepLog)
   deleteSleepLog(string)
@@ -106,10 +111,11 @@ class sleepSlice <<slice>> {
   resetSleepLogs()
 }
 class appointmentSlice <<slice>> {
+  == Estado ==
   appointments : MedicalAppointment[]
   isLoading : boolean
   error : string | null
-  --
+  == Ações (reducers) ==
   addAppointment(MedicalAppointment)
   updateAppointmentStatus({...})
   deleteAppointment(string)
@@ -117,6 +123,7 @@ class appointmentSlice <<slice>> {
   resetAppointments()
 }
 class uiSlice <<slice>> {
+  == Estado ==
   activeTab : hoje | dor | medicamentos | atividades | evolucao | perfil
   isMobileFrame : boolean
   isQuickSosOpen : boolean
@@ -130,7 +137,7 @@ class uiSlice <<slice>> {
   isQuickPhysioModalOpen : boolean
   toastMessage : string | null
   toastType : success | info | warning | error
-  --
+  == Ações (reducers) ==
   setActiveTab(AppTab)
   toggleMobileFrame()
   setMobileFrame(boolean)
@@ -156,7 +163,9 @@ store *-- appointmentSlice : appointments
 store *-- uiSlice : ui
 
 note bottom of store
+  Slice = fatia do estado global criada com createSlice.
+  Estado: os dados da fatia. Ações: funções (reducers) que os componentes
+  disparam com dispatch(acao(payload)). Não são métodos de objetos.
   Hooks tipados: useAppDispatch e useAppSelector.
-  O middleware desativa o serializableCheck.
 end note
 @enduml
